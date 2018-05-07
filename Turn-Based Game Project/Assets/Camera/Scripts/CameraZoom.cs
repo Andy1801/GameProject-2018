@@ -8,11 +8,8 @@ using UnityEngine;
 /// in and out using the mouse scrollwhell
 /// 
 /// FIXES NEEDED:
-/// 1. Modifier both panning speed and panning clamps based on the how zoomed in
-/// and out we are.
 /// 
-/// SUGGESTION:
-/// 1. The modifier of problem 1 can happen in a brand new script.
+/// 
 /// </summary>
 
 public class CameraZoom : MonoBehaviour {
@@ -27,6 +24,16 @@ public class CameraZoom : MonoBehaviour {
     // Holds whether the player wants to scroll using the axis for scroll wheel
     private float zooming;
 
+    // Stores the orthograpic size
+    private float originalZoom;
+    private float zoomed;
+
+    // Properties of the zoomed variable above. Check unity's API to learn more about Properties
+    public float Zoomed
+    {
+        get { return zoomed; }
+    }
+
     //Stores the main camera from the inspector
     private Camera mainCamera;
 
@@ -35,6 +42,12 @@ public class CameraZoom : MonoBehaviour {
         //Sets the main camera to be orthographic
         mainCamera = Camera.main;
         mainCamera.orthographic = true;
+
+        //If a camera exist then get me the original size. 
+        if (mainCamera)
+            originalZoom = mainCamera.orthographicSize;
+        else
+            Debug.LogWarning("No main camera exist");
 	}
 	
 	// Update is called once per frame
@@ -58,6 +71,9 @@ public class CameraZoom : MonoBehaviour {
 
         // Clamps the zoom size based on the min and max that the player can go to
         newZoom = Mathf.Clamp(newZoom, minZoom, maxZoom);
+
+        // Calculates the change in zoom
+        zoomed = originalZoom - newZoom;
 
         // Sets the new zoom size
         mainCamera.orthographicSize = newZoom;

@@ -455,7 +455,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   panSpeed: 100
   xClamp: 35
-  yClamp: 20
+  yClamp: 22
 --- !u!81 &897907101
 AudioListener:
   m_ObjectHideFlags: 0
@@ -517,7 +517,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d42fb3deaae550a4eb6a3a0c919a9478, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minZoom: 15
+  minZoom: 10
   maxZoom: 20
   zoomSpeed: 100
 --- !u!1 &1557812753

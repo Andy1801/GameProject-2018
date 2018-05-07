@@ -13,6 +13,11 @@ using UnityEngine;
 /// 
 /// 2. This script has to be tested for other angles in case of rotation being added.
 /// 
+/// 6. Calculation function should be moved to another script
+/// 
+/// 7. As the zoom changes we should move the actual clamp to represent the newly
+/// calculated clamp.
+/// 
 /// PROBLEMS FIXED:
 /// 3. When we get the stage out of view it gets replaced with a blue soild color
 /// due to the fact that the camera isnt viewing it anymore. Desired effect is that
@@ -47,10 +52,15 @@ public class CameraPan : MonoBehaviour {
     public float xClamp = 35f;
     public float yClamp = 20f;
 
+    // To accessed the deltaZoom inside the Camera Zoom.
+    private CameraZoom cameraZoom;
+
     private float horizontal;
     private float vertical;
 
-    //private Camera mainCamera;
+    private float originalPanSpeed;
+    private float originalXClamp;
+    private float originalYClamp;
 
     // The Vectors indicting the direction of the camera in a angle and not global space
     private Vector3 forward;
@@ -59,6 +69,13 @@ public class CameraPan : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+
+        cameraZoom = GetComponent<CameraZoom>();
+
+        originalPanSpeed = panSpeed;
+        originalXClamp = xClamp;
+        originalYClamp = yClamp;
+
         // Gets the local forward angle of the camera. Typically the z-axis (blue line in scence view)
         forward = transform.forward;
         forward = Vector3.Normalize(forward);
@@ -79,6 +96,38 @@ public class CameraPan : MonoBehaviour {
         // Calls this function when a key is pressed
         if (Input.anyKey)
             Pan();
+    }
+
+    // LateUpdate is called after both Update and FixedUpdate has ran
+    private void LateUpdate()
+    {
+        if(cameraZoom.Zoomed != 0)
+        {
+            xClamp = calculation(originalXClamp);
+            yClamp = calculation(originalYClamp);
+            panSpeed = calculation(originalPanSpeed);
+        }
+        else
+        {
+            xClamp = originalXClamp;
+            yClamp = originalYClamp;
+            panSpeed = originalPanSpeed;
+        }
+    }
+
+    // Calculates new values as the player zooms in and out of the screen: (value) - (value * ((deltaZoom/100) * 5))
+    private float calculation(float value)
+    {
+        //Turns the change in zoom into a ratio
+        float zoomRatio = (cameraZoom.Zoomed / 100) * 5;
+
+        //Gets the ratio based of the original value and the zoomRatio previously
+        float valueRatio = value * zoomRatio;
+
+        //Subtracts the ratio of the original value above with the original value
+        value -= valueRatio;
+
+        return value;
     }
 
     private void Pan()
@@ -111,13 +160,6 @@ public class CameraPan : MonoBehaviour {
         // Calculates if we should be moving in a certain direction with 1's and 0's
         float tempX = horizontal + vertical;
         float tempY = vertical - horizontal;
-        
-        //Displays the globe position of the camera not considering it's rotation.
-        Debug.Log("X: " + transform.position.x);
-        Debug.Log("TempX: " + tempX);
-
-        Debug.Log("Y: " + transform.position.y);
-        Debug.Log("TempY: " + tempY);
 
         // To determine if the player has moved to far left and right.
         if (transform.position.x + tempX < -xClamp && tempX <= 0)
