@@ -13,15 +13,15 @@ using UnityEngine;
 /// 
 /// 2. This script has to be tested for other angles in case of rotation being added.
 /// 
-/// 5. If you are on the right side of the screen then pressing 2 buttons
-/// at the same time to pan will make you move out of range.
-/// 
 /// PROBLEMS FIXED:
 /// 3. When we get the stage out of view it gets replaced with a blue soild color
 /// due to the fact that the camera isnt viewing it anymore. Desired effect is that
 /// the stage just moves into the corner smoothing not like it is being overtaken.
 /// 
 /// 4. There has to be a limit to how far the player can pan away from the stage.
+/// 
+/// 5. If you are on the right side of the screen then pressing 2 buttons
+/// at the same time to pan will make you move out of range.
 /// 
 /// SOLUTIONS:
 /// 3. Make sure that when translating the camera you don't change the z-axis position.
@@ -32,6 +32,9 @@ using UnityEngine;
 /// we can contiously track to see if the position of the camera has passed the x clamped position
 /// and the y clamp position. We then change the direction vector's variables x and y to 0 respectable.
 /// This make it so the translate doesn't happen on them.
+/// 
+/// 5. By changing the if statement condition to also account for when you horizontal and vertical 
+/// numbers are equal to zero it stops the situation in the corner.
 /// 
 /// </summary>
 
@@ -117,14 +120,14 @@ public class CameraPan : MonoBehaviour {
         Debug.Log("TempY: " + tempY);
 
         // To determine if the player has moved to far left and right.
-        if (transform.position.x + tempX < -xClamp && tempX < 0)
+        if (transform.position.x + tempX < -xClamp && tempX <= 0)
             direction.x = 0;
         
         if (transform.position.x + tempX > xClamp && tempX >= 0) 
             direction.x = 0;
 
         // To determine if the player has moved to far up or down.
-        if (transform.position.y + tempY < -yClamp  && tempY < 0)
+        if (transform.position.y + tempY < -yClamp  && tempY <= 0)
             direction.y = 0;
 
         if (transform.position.y + tempY > yClamp && tempY >= 0)
