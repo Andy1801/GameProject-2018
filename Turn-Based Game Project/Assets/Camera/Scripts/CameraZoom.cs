@@ -12,7 +12,8 @@ using UnityEngine;
 ///  
 /// </summary>
 
-public class CameraZoom : MonoBehaviour {
+
+public class CameraZoom : MonoBehaviour{
 
     // Determines the min and max zoom the player can get to.
     public float minZoom;
