@@ -32,3 +32,7 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+Turn-Based Game Project/.vs/Turn-Based Game Project/v15/Server/sqlite3/db.lock
+Turn-Based Game Project/.vs/Turn-Based Game Project/v15/Server/sqlite3/storage.ide
+Turn-Based Game Project/.vs/Turn-Based Game Project/v15/Server/sqlite3/storage.ide-shm
+Turn-Based Game Project/.vs/Turn-Based Game Project/v15/Server/sqlite3/storage.ide-wal
