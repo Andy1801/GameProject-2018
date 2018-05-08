@@ -9,7 +9,7 @@ using UnityEngine;
 /// 
 /// FIXES NEEDED:
 /// 
-/// 
+///  
 /// </summary>
 
 public class CameraZoom : MonoBehaviour {
