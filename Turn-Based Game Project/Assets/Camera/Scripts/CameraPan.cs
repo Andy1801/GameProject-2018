@@ -115,7 +115,7 @@ public class CameraPan : MonoBehaviour {
         }
     }
 
-    // Calculates new values as the player zooms in and out of the screen:  
+    // Calculates new values as the player zooms in and out of the screen: (value) - (value * ((deltaZoom/100) * 5))
     private float calculation(float value)
     {
         //Turns the change in zoom into a ratio
