@@ -51,6 +51,7 @@ public class CameraPan : MonoBehaviour {
     // How far the player can pan in the x-axis and y-axis
     public float xClamp = 35f;
     public float yClamp = 20f;
+    public float negYClamp = 10f;
 
     // To accessed the deltaZoom inside the Camera Zoom.
     private CameraZoom cameraZoom;
@@ -61,6 +62,7 @@ public class CameraPan : MonoBehaviour {
     private float originalPanSpeed;
     private float originalXClamp;
     private float originalYClamp;
+    private float originalNegYClamp;
 
     // The Vectors indicting the direction of the camera in a angle and not global space
     private Vector3 forward;
@@ -75,6 +77,7 @@ public class CameraPan : MonoBehaviour {
         originalPanSpeed = panSpeed;
         originalXClamp = xClamp;
         originalYClamp = yClamp;
+        originalNegYClamp = negYClamp;
 
         // Gets the local forward angle of the camera. Typically the z-axis (blue line in scence view)
         forward = transform.forward;
@@ -105,12 +108,14 @@ public class CameraPan : MonoBehaviour {
         {
             xClamp = calculation(originalXClamp);
             yClamp = calculation(originalYClamp);
+            negYClamp = calculation(originalNegYClamp);
             panSpeed = calculation(originalPanSpeed);
         }
         else
         {
             xClamp = originalXClamp;
             yClamp = originalYClamp;
+            negYClamp = originalNegYClamp;
             panSpeed = originalPanSpeed;
         }
     }
@@ -169,7 +174,7 @@ public class CameraPan : MonoBehaviour {
             direction.x = 0;
 
         // To determine if the player has moved to far up or down.
-        if (transform.position.y + tempY < -yClamp  && tempY <= 0)
+        if (transform.position.y + tempY < -negYClamp  && tempY <= 0)
             direction.y = 0;
 
         if (transform.position.y + tempY > yClamp && tempY >= 0)

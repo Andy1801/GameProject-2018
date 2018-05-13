@@ -10,6 +10,9 @@ using UnityEngine;
 /// If needed we should modifiy this so that you can rotate the screen by any
 /// specific angle.
 /// 
+/// ERROR:
+/// This script doesn't work with our current setup as to be reworked.
+/// 
 /// </summary>
 
 public class Rotate : MonoBehaviour {
