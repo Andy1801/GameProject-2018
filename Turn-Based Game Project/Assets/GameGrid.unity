@@ -234,19 +234,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tiles:
-  - name: Grass
-    move_cost: 1
-    isWalkable: 1
-    damage: 0
-    tile_Prefab: {fileID: 1056963203334622, guid: 735a3a0b6cc80464c9b92fd072c016ee,
-      type: 2}
-  - name: Mountain
-    move_cost: 9999999
-    isWalkable: 0
-    damage: 0
-    tile_Prefab: {fileID: 1899144661701556, guid: 864213da66efd964ba96e3e5ffdc98bc,
-      type: 2}
-  dimensions: 15
+  - {fileID: 11400000, guid: deb3c181a626f794aaba05979724b3e4, type: 2}
+  - {fileID: 11400000, guid: 9bf4f7f23657ff149914f71442df0b93, type: 2}
+  dimensions: 30
   parentGrid: {fileID: 221243930}
 --- !u!4 &1569222041
 Transform:
@@ -270,15 +260,15 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4559468575382714, guid: a00d1d5a90ad595408fea4b5fba2a2c4, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -1.17
       objectReference: {fileID: 0}
     - target: {fileID: 4559468575382714, guid: a00d1d5a90ad595408fea4b5fba2a2c4, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 1.88
       objectReference: {fileID: 0}
     - target: {fileID: 4559468575382714, guid: a00d1d5a90ad595408fea4b5fba2a2c4, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 1.33
       objectReference: {fileID: 0}
     - target: {fileID: 4559468575382714, guid: a00d1d5a90ad595408fea4b5fba2a2c4, type: 2}
       propertyPath: m_LocalRotation.x
@@ -299,6 +289,11 @@ Prefab:
     - target: {fileID: 4559468575382714, guid: a00d1d5a90ad595408fea4b5fba2a2c4, type: 2}
       propertyPath: m_RootOrder
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 20560776187999996, guid: a00d1d5a90ad595408fea4b5fba2a2c4,
+        type: 2}
+      propertyPath: orthographic
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a00d1d5a90ad595408fea4b5fba2a2c4, type: 2}

@@ -18,6 +18,8 @@ using UnityEngine;
 /// 7. As the zoom changes we should move the actual clamp to represent the newly
 /// calculated clamp.
 /// 
+/// 8. Change the y-axis to move forward not diagonally.
+/// 
 /// PROBLEMS FIXED:
 /// 3. When we get the stage out of view it gets replaced with a blue soild color
 /// due to the fact that the camera isnt viewing it anymore. Desired effect is that
@@ -90,7 +92,9 @@ public class CameraPan : MonoBehaviour {
         right = Quaternion.Euler(new Vector3(0, 90, 0)) * forward;
 
         // Creates a vector with the forward angle now rotated 45 degress on the y-axis(upward)
-        up = Quaternion.Euler(new Vector3(0, 0, 45)) * forward;
+        //up = Quaternion.Euler(new Vector3(0, 0, 45)) * forward;
+
+        up = transform.up;
 	}
 	
 	// Update is called once per frame

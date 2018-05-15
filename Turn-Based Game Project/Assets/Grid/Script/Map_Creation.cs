@@ -39,7 +39,7 @@ public class Map_Creation : MonoBehaviour {
 
         SetNeighbors();
         FindNeighbors();
-	}
+    }
     //Initilizes the array for each of the neighbors related to one of the tiles.
     private void SetNeighbors()
     {
@@ -71,21 +71,21 @@ public class Map_Creation : MonoBehaviour {
             {
                 if (x != 0)
                 {
-                    graph[x, y].negihbors[counter] = graph[x - 1, y];
+                    graph[x, y].neighbors[counter] = graph[x - 1, y];
                     counter++;
                 }
                 if(x != (dimensions - 1))
                 {
-                    graph[x, y].negihbors[counter] = graph[x + 1, y];
+                    graph[x, y].neighbors[counter] = graph[x + 1, y];
                     counter++;
                 }
                 if (y != 0)
                 {
-                    graph[x, y].negihbors[counter] = graph[x, y - 1];
+                    graph[x, y].neighbors[counter] = graph[x, y - 1];
                     counter++;
                 }
                 if (y != (dimensions - 1))
-                    graph[x, y].negihbors[counter] = graph[x, y + 1];
+                    graph[x, y].neighbors[counter] = graph[x, y + 1];
 
                 counter = 0;
             }

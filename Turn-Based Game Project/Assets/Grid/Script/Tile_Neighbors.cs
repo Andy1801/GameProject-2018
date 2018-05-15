@@ -7,17 +7,17 @@ using UnityEngine;
 /// </summary>
 [System.Serializable]
 public class Tile_Neighbors{
-    public Tile_Neighbors[] negihbors;
+    public Tile_Neighbors[] neighbors;
     public int x;
     public int y;
 
     public Tile_Neighbors( bool conditionX, bool conditionY)
     {
         if (conditionX && conditionY)
-            negihbors = new Tile_Neighbors[2];
+            neighbors = new Tile_Neighbors[2];
         else if (conditionX || conditionY)
-            negihbors = new Tile_Neighbors[3];
+            neighbors = new Tile_Neighbors[3];
         else
-            negihbors = new Tile_Neighbors[4];
+            neighbors = new Tile_Neighbors[4];
     }
 }
