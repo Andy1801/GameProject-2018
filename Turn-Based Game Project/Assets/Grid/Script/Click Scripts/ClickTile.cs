@@ -16,5 +16,7 @@ public class ClickTile : MonoBehaviour {
 
         x = transform.position.x;
         y = transform.position.z;
+
+        // Call unity UI system script to showcase information
     }
 }

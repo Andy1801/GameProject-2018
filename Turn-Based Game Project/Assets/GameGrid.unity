@@ -206,6 +206,48 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1001 &474088979
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4827305260538722, guid: 654c1c8b16b67b54c8e555f22c523d39, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4827305260538722, guid: 654c1c8b16b67b54c8e555f22c523d39, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4827305260538722, guid: 654c1c8b16b67b54c8e555f22c523d39, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4827305260538722, guid: 654c1c8b16b67b54c8e555f22c523d39, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4827305260538722, guid: 654c1c8b16b67b54c8e555f22c523d39, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4827305260538722, guid: 654c1c8b16b67b54c8e555f22c523d39, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4827305260538722, guid: 654c1c8b16b67b54c8e555f22c523d39, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4827305260538722, guid: 654c1c8b16b67b54c8e555f22c523d39, type: 2}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: 654c1c8b16b67b54c8e555f22c523d39, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1 &1569222039
 GameObject:
   m_ObjectHideFlags: 0
@@ -236,7 +278,7 @@ MonoBehaviour:
   tiles:
   - {fileID: 11400000, guid: deb3c181a626f794aaba05979724b3e4, type: 2}
   - {fileID: 11400000, guid: 9bf4f7f23657ff149914f71442df0b93, type: 2}
-  dimensions: 30
+  dimensions: 25
   parentGrid: {fileID: 221243930}
 --- !u!4 &1569222041
 Transform:
