@@ -25,6 +25,8 @@ public class PathFinding : MonoBehaviour {
     //The tile that the player or the tracker is currently on
     private Tile_Properties currentTiles;
 
+    private bool findingPath;
+
     // Change this so it is not public and is the unit you clicked on
     public ClickUnit Unit;
 
@@ -35,6 +37,8 @@ public class PathFinding : MonoBehaviour {
         gameManager = GetComponent<Game_Manager>();
 
         startPosition = Unit.transform.position;
+
+        findingPath = false;
 	}
 
     /// <summary>
@@ -72,7 +76,6 @@ public class PathFinding : MonoBehaviour {
 
         // Stores the current tile that we are on.
         Tile_Neighbors sourceTile;
-
         
         int x = (int)startPosition.x;
         int z = (int)startPosition.z;
@@ -80,37 +83,52 @@ public class PathFinding : MonoBehaviour {
         // Sets all the dictionary pairs to zero based on the graph in game manager
         foreach (Tile_Neighbors current in gameManager.graph)
         {
-            cost[current] = 0;
+            cost[current] = 1000;
         }
 
         // Sets the players position as the first location.
         sourceTile = gameManager.graph[x,z];
 
+        cost[sourceTile] = 0;
+
         //Pushes the sourceTile into the stack
         holdNeighbors.Push(sourceTile);
 
+        //Debug.Log(cost[sourceTile]);
+
         // As long as the stack as some elements then go through their
         // neighbors and calculate the cost of the speed.
-        while(holdNeighbors.Count != 0)
-        {
-            Tile_Neighbors[] neighbors = sourceTile.neighbors;
+         while(holdNeighbors.Count != 0)
+         {
+             Tile_Neighbors[] neighbors = sourceTile.neighbors;
 
-            foreach (Tile_Neighbors next in neighbors)
-            {
-                TileOn(next.position);
-                cost[next] = cost[sourceTile] + currentTiles.move_cost;
-                if(cost[next] < Unit.property.speed)
+             foreach (Tile_Neighbors next in neighbors)
+             {
+                 TileOn(next.position);
+
+                // For checking on the console
+                Debug.Log("Before speed: " + cost[next]);
+                Debug.Log("Condition: " + (cost[next] > (cost[sourceTile] + currentTiles.move_cost)));
+                Debug.Log("Source Tile" + sourceTile.position);
+                Debug.Log("Current Tile" + next.position);
+
+
+                //If our cost[next] is greater then our new move cost then change it because that is not the shortest path
+                //and push it to the top of the stack
+                if (cost[next] > (cost[sourceTile] + currentTiles.move_cost) && (cost[sourceTile] + currentTiles.move_cost) <= Unit.property.speed)
                 {
+                    cost[next] = cost[sourceTile] + currentTiles.move_cost;
                     holdNeighbors.Push(next);
-                    Debug.Log("Speed: " + cost[next]);
-                    Debug.Log(next.position);
                 }
-            }
 
-            // Pop the next element from the stack.
-            sourceTile = holdNeighbors.Pop();
-        }
+                Debug.Log("Speed: " + cost[next]);
+             }
 
+             // Pop the next element from the stack.
+             sourceTile = holdNeighbors.Pop();
+         }
+
+        findingPath = false;
     }
 
     /// <summary>
@@ -118,10 +136,10 @@ public class PathFinding : MonoBehaviour {
     /// </summary>
     private void Update()
     {
-       if(Input.anyKey)
+       if(Input.anyKey && !findingPath)
         {
-            TileOn(startPosition);
-            Debug.Log(currentTiles.tileName);
+            Debug.Log("Update");
+            findingPath = true;
             pathFinding();
         }
     }
