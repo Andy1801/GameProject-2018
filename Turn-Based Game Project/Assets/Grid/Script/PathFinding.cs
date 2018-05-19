@@ -7,6 +7,8 @@ using UnityEngine;
 /// 
 /// FIXES NEEDED:
 /// 1. Have to make the units to be able to be changed to the clicked unit.
+/// 
+/// 2. Need to make so you do not calculate for the same tiles that you already came from.
 /// </summary>
 
 public class PathFinding : MonoBehaviour {
@@ -24,7 +26,7 @@ public class PathFinding : MonoBehaviour {
     private Tile_Properties currentTiles;
 
     // Change this so it is not public and is the unit you clicked on
-    public GameObject Unit;
+    public ClickUnit Unit;
 
 	// Use this for initialization
 	void Start () {
@@ -39,10 +41,10 @@ public class PathFinding : MonoBehaviour {
     /// Gets the tile that the player or the track is standing by casting a 
     /// ray cast into the floor.
     /// </summary>
-	private void TileOn()
+	private void TileOn(Vector3 currentPosition)
     {
         RaycastHit hit;
-        Vector3 currentPosition = startPosition;
+        currentPosition = new Vector3(currentPosition.x, 1f, currentPosition.y);
 
         //if ray cast hit something then store it into hit
         if(Physics.Raycast(currentPosition, Vector3.down, out hit))
@@ -57,6 +59,60 @@ public class PathFinding : MonoBehaviour {
         }
     }
 
+
+    /// <summary>
+    /// The purpose is to find the shortest path well taking into account the speed
+    /// of the player. This uses a dictionary to key-pair with the speed and adds 
+    /// the movecost of the tile to remove from speed.
+    /// </summary>
+    public void pathFinding()
+    {
+        // Stores the cost to get to this tile related to the tile neighbor
+        Dictionary<Tile_Neighbors, int> cost = new Dictionary<Tile_Neighbors, int>();
+
+        // Stores the current tile that we are on.
+        Tile_Neighbors sourceTile;
+
+        
+        int x = (int)startPosition.x;
+        int z = (int)startPosition.z;
+
+        // Sets all the dictionary pairs to zero based on the graph in game manager
+        foreach (Tile_Neighbors current in gameManager.graph)
+        {
+            cost[current] = 0;
+        }
+
+        // Sets the players position as the first location.
+        sourceTile = gameManager.graph[x,z];
+
+        //Pushes the sourceTile into the stack
+        holdNeighbors.Push(sourceTile);
+
+        // As long as the stack as some elements then go through their
+        // neighbors and calculate the cost of the speed.
+        while(holdNeighbors.Count != 0)
+        {
+            Tile_Neighbors[] neighbors = sourceTile.neighbors;
+
+            foreach (Tile_Neighbors next in neighbors)
+            {
+                TileOn(next.position);
+                cost[next] = cost[sourceTile] + currentTiles.move_cost;
+                if(cost[next] < Unit.property.speed)
+                {
+                    holdNeighbors.Push(next);
+                    Debug.Log("Speed: " + cost[next]);
+                    Debug.Log(next.position);
+                }
+            }
+
+            // Pop the next element from the stack.
+            sourceTile = holdNeighbors.Pop();
+        }
+
+    }
+
     /// <summary>
     /// This function is just here for testing.
     /// </summary>
@@ -64,8 +120,9 @@ public class PathFinding : MonoBehaviour {
     {
        if(Input.anyKey)
         {
-            TileOn();
+            TileOn(startPosition);
             Debug.Log(currentTiles.tileName);
+            pathFinding();
         }
     }
 }
