@@ -7,7 +7,7 @@ using UnityEngine;
 /// we gave it as well as a few conditions.
 /// </summary>
 
-public class Map_Creation : MonoBehaviour {
+public class Game_Manager : MonoBehaviour {
 
     // Holds the property of the tiles
 	public Tile_Properties[] tiles;
@@ -16,7 +16,9 @@ public class Map_Creation : MonoBehaviour {
 	private int dimensions = 10;
 
 	private int[,] tile_location;
-	private Tile_Neighbors[,] graph;
+
+    [System.NonSerialized]
+	public Tile_Neighbors[,] graph;
 
     [SerializeField]
     private GameObject parentGrid;
@@ -40,6 +42,7 @@ public class Map_Creation : MonoBehaviour {
         SetNeighbors();
         FindNeighbors();
     }
+
     //Initilizes the array for each of the neighbors related to one of the tiles.
     private void SetNeighbors()
     {
@@ -50,9 +53,9 @@ public class Map_Creation : MonoBehaviour {
                 bool conditionX = (x == 0 || x == (dimensions - 1));
                 bool conditionY = (y == 0 || y == (dimensions - 1));
 
+
                 graph[x, y] = new Tile_Neighbors(conditionX, conditionY);
-                graph[x, y].x = x;
-                graph[x, y].y = y;
+                graph[x, y].position = new Vector2(x, y);
             }
         }
     }

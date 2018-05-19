@@ -245,6 +245,11 @@ Prefab:
       propertyPath: m_RootOrder
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 114917633744214488, guid: 654c1c8b16b67b54c8e555f22c523d39,
+        type: 2}
+      propertyPath: temp
+      value: 
+      objectReference: {fileID: 1569222040}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 654c1c8b16b67b54c8e555f22c523d39, type: 2}
   m_IsPrefabParent: 0
@@ -257,8 +262,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1569222041}
   - component: {fileID: 1569222040}
+  - component: {fileID: 1569222042}
   m_Layer: 0
-  m_Name: Map
+  m_Name: GameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -278,7 +284,7 @@ MonoBehaviour:
   tiles:
   - {fileID: 11400000, guid: deb3c181a626f794aaba05979724b3e4, type: 2}
   - {fileID: 11400000, guid: 9bf4f7f23657ff149914f71442df0b93, type: 2}
-  dimensions: 25
+  dimensions: 15
   parentGrid: {fileID: 221243930}
 --- !u!4 &1569222041
 Transform:
@@ -293,6 +299,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1569222042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1569222039}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dce73d6c45a4ec141bc73b6d1a65e6eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1855686631
 Prefab:
   m_ObjectHideFlags: 0

@@ -8,16 +8,19 @@ using UnityEngine;
 [System.Serializable]
 public class Tile_Neighbors{
     public Tile_Neighbors[] neighbors;
-    public int x;
-    public int y;
+    public Vector2 position;  
+
+    public int counter;
 
     public Tile_Neighbors( bool conditionX, bool conditionY)
     {
         if (conditionX && conditionY)
-            neighbors = new Tile_Neighbors[2];
+            counter = 2;
         else if (conditionX || conditionY)
-            neighbors = new Tile_Neighbors[3];
+            counter = 3;
         else
-            neighbors = new Tile_Neighbors[4];
+            counter = 4;
+
+        neighbors = new Tile_Neighbors[counter];
     }
 }
