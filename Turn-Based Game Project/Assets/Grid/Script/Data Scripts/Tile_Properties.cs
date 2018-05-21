@@ -9,5 +9,7 @@ public class Tile_Properties : ScriptableObject {
 	public int move_cost = 1;
 	public bool isWalkable = true;
 	public int damage = 0;
+    public Color moveableColor;
+    public Color unMoveableColor;
 	public GameObject tile_Prefab;
 }

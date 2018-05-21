@@ -5,6 +5,9 @@ using UnityEngine;
 /// <summary>
 /// The purpose of this script is to create the grid for the map based on the tiles 
 /// we gave it as well as a few conditions.
+/// 
+/// FIXES NEEDED:
+/// 1. Make the highlight transition slowly rather then instantly
 /// </summary>
 
 public class Game_Manager : MonoBehaviour {
@@ -93,5 +96,13 @@ public class Game_Manager : MonoBehaviour {
                 counter = 0;
             }
         }
+    }
+
+    public void highlight(GameObject tile, Tile_Properties tileInfo)
+    {
+        Renderer tileMat = tile.GetComponent<Renderer>();
+
+        tileMat.material.color = tileInfo.moveableColor;
+
     }
 }

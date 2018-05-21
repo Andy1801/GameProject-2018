@@ -8,7 +8,10 @@ using UnityEngine;
 /// FIXES NEEDED:
 /// 1. Have to make the units to be able to be changed to the clicked unit.
 /// 
-/// 2. Need to make so you do not calculate for the same tiles that you already came from.
+/// 2. Have to setup a script to translate the position of the tile to that of the world space
+/// 
+/// 3. Highlighted tiles should be reseted(Function is located in the game manager)
+/// 
 /// </summary>
 
 public class PathFinding : MonoBehaviour {
@@ -23,7 +26,8 @@ public class PathFinding : MonoBehaviour {
     private Vector3 startPosition;
 
     //The tile that the player or the tracker is currently on
-    private Tile_Properties currentTiles;
+    private Tile_Properties tileInfo;
+    private GameObject currentTiles;
 
     private bool findingPath;
 
@@ -56,7 +60,8 @@ public class PathFinding : MonoBehaviour {
             //if hit is not equal to null then set the current tile
             if (hit.collider != null)
             {
-                currentTiles = hit.collider.GetComponent<ClickTile>().property;
+                currentTiles = hit.collider.gameObject;
+                tileInfo = currentTiles.GetComponent<ClickTile>().property;
             }
             else
                 Debug.LogError("The player is not standing on a platform");
@@ -106,22 +111,15 @@ public class PathFinding : MonoBehaviour {
              {
                  TileOn(next.position);
 
-                // For checking on the console
-                Debug.Log("Before speed: " + cost[next]);
-                Debug.Log("Condition: " + (cost[next] > (cost[sourceTile] + currentTiles.move_cost)));
-                Debug.Log("Source Tile" + sourceTile.position);
-                Debug.Log("Current Tile" + next.position);
-
-
                 //If our cost[next] is greater then our new move cost then change it because that is not the shortest path
                 //and push it to the top of the stack
-                if (cost[next] > (cost[sourceTile] + currentTiles.move_cost) && (cost[sourceTile] + currentTiles.move_cost) <= Unit.property.speed)
+                if (cost[next] > (cost[sourceTile] + tileInfo.move_cost) && (cost[sourceTile] + tileInfo.move_cost) <= Unit.property.speed)
                 {
-                    cost[next] = cost[sourceTile] + currentTiles.move_cost;
+                    // Highlights the tiles. This is located in the game manager
+                    gameManager.highlight(currentTiles, tileInfo);
+                    cost[next] = cost[sourceTile] + tileInfo.move_cost;
                     holdNeighbors.Push(next);
                 }
-
-                Debug.Log("Speed: " + cost[next]);
              }
 
              // Pop the next element from the stack.
@@ -138,7 +136,6 @@ public class PathFinding : MonoBehaviour {
     {
        if(Input.anyKey && !findingPath)
         {
-            Debug.Log("Update");
             findingPath = true;
             pathFinding();
         }
