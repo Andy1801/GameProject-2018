@@ -16,6 +16,8 @@ using UnityEngine;
 
 public class PathFinding : MonoBehaviour {
 
+    public float lerpTime;
+
     // Going to hold the next positions to be visited.
     private Stack<Tile_Neighbors> holdNeighbors;
 
@@ -29,6 +31,9 @@ public class PathFinding : MonoBehaviour {
     private Tile_Properties tileInfo;
     private GameObject currentTiles;
 
+    // Stores the cost to get to this tile related to the tile neighbor
+    private Dictionary<Tile_Neighbors, int> cost;
+
     private bool findingPath;
 
     // Change this so it is not public and is the unit you clicked on
@@ -41,6 +46,8 @@ public class PathFinding : MonoBehaviour {
         gameManager = GetComponent<Game_Manager>();
 
         startPosition = Unit.transform.position;
+
+        cost = new Dictionary<Tile_Neighbors, int>();
 
         findingPath = false;
 	}
@@ -75,12 +82,10 @@ public class PathFinding : MonoBehaviour {
     /// the movecost of the tile to remove from speed.
     /// </summary>
     public void pathFinding()
-    {
-        // Stores the cost to get to this tile related to the tile neighbor
-        Dictionary<Tile_Neighbors, int> cost = new Dictionary<Tile_Neighbors, int>();
-
+    {   
         // Stores the current tile that we are on.
         Tile_Neighbors sourceTile;
+        holdNeighbors.Clear();
         
         int x = (int)startPosition.x;
         int z = (int)startPosition.z;
@@ -125,8 +130,110 @@ public class PathFinding : MonoBehaviour {
              // Pop the next element from the stack.
              sourceTile = holdNeighbors.Pop();
          }
+    }
 
-        findingPath = false;
+    /// <summary>
+    /// Sets up the shortest path from where the player is to the tile that they clicked.
+    /// This is called when the highlighted tile is clicked on.
+    /// Remember that stacks FIRST IN LAST OUT.
+    /// </summary>
+    /// <param xPosition="x position of the tile"></param>
+    /// <param yPosition="y"></param>
+    public void pathSetup(float x, float y)
+    {
+        int xTemp = (int)x;
+        int yTemp = (int)y;
+
+        // The tile that you want to move to
+        Tile_Neighbors startMoveTile = gameManager.graph[xTemp,yTemp];
+
+        holdNeighbors.Push(startMoveTile);
+
+        while(cost[startMoveTile] != 0)
+        {
+            // The next tile that you move to.
+            Tile_Neighbors nextMoveTile = null;
+
+            // Checks all of the tiles neighbors to find the shortest one.
+            foreach(Tile_Neighbors neighbor in startMoveTile.neighbors)
+            {
+                if (nextMoveTile == null)
+                    nextMoveTile = neighbor;
+                else if (cost[nextMoveTile] > cost[neighbor])
+                    nextMoveTile = neighbor;
+            }
+
+            Debug.Log(cost[nextMoveTile]);
+
+            // Push the shortest tile that was found in the foreach loop above
+            holdNeighbors.Push(nextMoveTile);
+            startMoveTile = nextMoveTile;
+        }
+
+        StartCoroutine("MoveUnit");
+        
+    }
+
+    /// <summary>
+    /// Move the units from each of the position that are stored in the stack using a CoRoutine 
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator MoveUnit()
+    {
+        //Distance between to Vector3
+        float distance = 0f;
+
+        // The tile you are moving to
+        Tile_Neighbors destinationTile = holdNeighbors.Pop();
+
+        //The position of the tile you are moving to. TODO: Make the new Portion of this into a function
+        Vector3 destination = new Vector3(destinationTile.position.x, 1f, destinationTile.position.y);
+
+        // While the stack is not empty keep moving the unit.
+        while(holdNeighbors.Count != 0)
+        {
+            // Get the position in between the to vectors at the rate of the lerpTime
+            Vector3 newPosition = Vector3.Lerp(Unit.transform.position, destination, lerpTime);
+
+            //Set the new position to the lerp position
+            Unit.transform.position = newPosition;
+
+            distance = Vector3.Distance(Unit.transform.position, destination);
+
+            //If distance is less then a certain number then you have reached the current position
+            //set the next one and move to it.
+            // Should not be a magic number
+            if (distance < 0.1)
+            {
+                Debug.Log("Distance met");
+                Debug.Log("Destination: " + holdNeighbors.Peek().position);
+                transform.position = destination;
+                destinationTile = holdNeighbors.Pop();
+                destination = new Vector3(destinationTile.position.x, 1f, destinationTile.position.y);
+            }
+
+            //Wait until the end of frame to run the while loop again.
+            yield return new WaitForEndOfFrame();
+        }
+
+        // TODO: Everything from this downwards may need some rethinking.
+        distance = 1f;
+
+        while(distance > 0.1f)
+        {
+            Vector3 newPosition = Vector3.Lerp(Unit.transform.position, destination, lerpTime);
+
+            Unit.transform.position = newPosition;
+
+            distance = Vector3.Distance(Unit.transform.position, destination);
+
+            if (distance < 0.1)
+            {
+                transform.position = destination;
+            }
+        }
+
+        //findingPath = false;
     }
 
     /// <summary>

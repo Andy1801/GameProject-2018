@@ -98,11 +98,15 @@ public class Game_Manager : MonoBehaviour {
         }
     }
 
+    //Highlights the tiles that the player can walk on and then lets the tiles know that they are highlighted.
     public void highlight(GameObject tile, Tile_Properties tileInfo)
     {
         Renderer tileMat = tile.GetComponent<Renderer>();
 
         tileMat.material.color = tileInfo.moveableColor;
+
+        ClickTile tileClick = tile.GetComponent<ClickTile>();
+        tileClick.Highlighted = true;
 
     }
 }

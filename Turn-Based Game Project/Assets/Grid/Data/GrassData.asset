@@ -13,7 +13,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileName: Grass
   move_cost: 1
-  isWalkable: 1
   damage: 0
+  isWalkable: 1
+  moveableColor: {r: 1, g: 0.9550654, b: 0, a: 0}
+  unMoveableColor: {r: 1, g: 0, b: 0, a: 0}
+  path: {fileID: 114389963876559546, guid: e2b6a4895d709b24e9bcbd4ee9b340ee, type: 2}
   tile_Prefab: {fileID: 1056963203334622, guid: 735a3a0b6cc80464c9b92fd072c016ee,
     type: 2}

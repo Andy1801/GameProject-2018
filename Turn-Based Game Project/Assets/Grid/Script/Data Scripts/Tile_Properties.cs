@@ -6,9 +6,9 @@ using UnityEngine;
 public class Tile_Properties : ScriptableObject {
 
 	public string tileName;
-	public int move_cost = 1;
-	public bool isWalkable = true;
+    public int move_cost = 1;
 	public int damage = 0;
+    public bool isWalkable = true;
     public Color moveableColor;
     public Color unMoveableColor;
 	public GameObject tile_Prefab;
