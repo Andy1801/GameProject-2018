@@ -24,9 +24,6 @@ public class PathFinding : MonoBehaviour {
     // Reference to the game manager script in order to access neighbors
     private Game_Manager gameManager;
 
-    //Start position of the neighbors
-    private Vector3 startPosition;
-
     //The tile that the player or the tracker is currently on
     private Tile_Properties tileInfo;
     private GameObject currentTiles;
@@ -44,8 +41,6 @@ public class PathFinding : MonoBehaviour {
         holdNeighbors = new Stack<Tile_Neighbors>();
 
         gameManager = GetComponent<Game_Manager>();
-
-        startPosition = Unit.transform.position;
 
         cost = new Dictionary<Tile_Neighbors, int>();
 
@@ -81,14 +76,14 @@ public class PathFinding : MonoBehaviour {
     /// of the player. This uses a dictionary to key-pair with the speed and adds 
     /// the movecost of the tile to remove from speed.
     /// </summary>
-    public void pathFinding()
+    public void pathFinding(Vector3 startPosition)
     {   
         // Stores the current tile that we are on.
         Tile_Neighbors sourceTile;
         holdNeighbors.Clear();
-        
-        int x = (int)startPosition.x;
-        int z = (int)startPosition.z;
+
+        int x = Mathf.RoundToInt(startPosition.x);
+        int z = Mathf.RoundToInt(startPosition.z);
 
         // Sets all the dictionary pairs to zero based on the graph in game manager
         foreach (Tile_Neighbors current in gameManager.graph)
@@ -118,10 +113,12 @@ public class PathFinding : MonoBehaviour {
 
                 //If our cost[next] is greater then our new move cost then change it because that is not the shortest path
                 //and push it to the top of the stack
-                if (cost[next] > (cost[sourceTile] + tileInfo.move_cost) && (cost[sourceTile] + tileInfo.move_cost) <= Unit.property.speed)
+                if (!tileInfo.isWalkable)
+                    continue;
+                else if (cost[next] > (cost[sourceTile] + tileInfo.move_cost) && (cost[sourceTile] + tileInfo.move_cost) <= Unit.property.speed)
                 {
                     // Highlights the tiles. This is located in the game manager
-                    gameManager.highlight(currentTiles, tileInfo);
+                    gameManager.highlight(currentTiles, tileInfo, true);
                     cost[next] = cost[sourceTile] + tileInfo.move_cost;
                     holdNeighbors.Push(next);
                 }
@@ -168,6 +165,17 @@ public class PathFinding : MonoBehaviour {
             // Push the shortest tile that was found in the foreach loop above
             holdNeighbors.Push(nextMoveTile);
             startMoveTile = nextMoveTile;
+        }
+
+
+        foreach(Tile_Neighbors current in gameManager.graph)
+        {
+            // If the cost of the tile had been modified then find the tile and take away the highlight.
+            if(cost[current] != 1000)
+            {
+                TileOn(current.position);
+                gameManager.highlight(currentTiles, tileInfo, false);
+            }
         }
 
         StartCoroutine("MoveUnit");
@@ -234,17 +242,5 @@ public class PathFinding : MonoBehaviour {
         }
 
         //findingPath = false;
-    }
-
-    /// <summary>
-    /// This function is just here for testing.
-    /// </summary>
-    private void Update()
-    {
-       if(Input.anyKey && !findingPath)
-        {
-            findingPath = true;
-            pathFinding();
-        }
     }
 }

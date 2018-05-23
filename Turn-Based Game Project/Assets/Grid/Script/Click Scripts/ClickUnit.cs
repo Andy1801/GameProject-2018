@@ -7,15 +7,19 @@ public class ClickUnit : MonoBehaviour {
     public Unit_Properties property;
     public Game_Manager temp;
 
+    private PathFinding path;
+
     private bool active;
+
+    private void Start()
+    {
+        path = GameObject.FindWithTag("GameManager").GetComponent<PathFinding>();
+    }
 
     private void OnMouseDown()
     {
         Debug.Log("Clicked Unit");
-        property.position = new Vector2(transform.position.x, transform.position.z);
 
-        //Calls highlight tile script here
-        //Calls movement script
-        //Once movement is done unhighlight all the highlighted tiles.
+        path.pathFinding(new Vector3(transform.position.x, 1.0f, transform.position.z));
     }
 }

@@ -32,6 +32,10 @@ public class Game_Manager : MonoBehaviour {
 		tile_location = new int[dimensions,dimensions];
         graph = new Tile_Neighbors[dimensions, dimensions];
 
+        //This is for testing
+        tile_location[1, 0] = 1;
+        tile_location[2, 1] = 1;
+
 		for(int x = 0; x < dimensions; x++)
 		{
 			for(int y = 0; y < dimensions; y++)
@@ -99,14 +103,21 @@ public class Game_Manager : MonoBehaviour {
     }
 
     //Highlights the tiles that the player can walk on and then lets the tiles know that they are highlighted.
-    public void highlight(GameObject tile, Tile_Properties tileInfo)
+    public void highlight(GameObject tile, Tile_Properties tileInfo, bool toHighilight)
     {
         Renderer tileMat = tile.GetComponent<Renderer>();
 
-        tileMat.material.color = tileInfo.moveableColor;
-
         ClickTile tileClick = tile.GetComponent<ClickTile>();
-        tileClick.Highlighted = true;
 
+        if (toHighilight)
+        {
+            tileMat.material.color = tileInfo.moveableColor;
+            tileClick.Highlighted = true;
+        }
+        else
+        {
+            tileMat.material.color = tileInfo.originalColor;
+            tileClick.Highlighted = false;
+        }
     }
 }

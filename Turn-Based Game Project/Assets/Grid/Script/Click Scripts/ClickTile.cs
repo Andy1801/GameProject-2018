@@ -6,7 +6,6 @@ public class ClickTile : MonoBehaviour {
 
     public Tile_Properties property;
 
-
     private float x;
     private float y;
 
