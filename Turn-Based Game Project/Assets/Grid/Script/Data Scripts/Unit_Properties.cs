@@ -7,12 +7,12 @@ public class Unit_Properties : ScriptableObject {
 
     public string unitName;
 
-    public float attack;
+    /*public float attack;
     public float defense;
-    public float speed;
+    public float speed;*/
 
     //Portential category for a specific skill here. Using a C# script that gets called whenever you used a skill.
 
-    public Vector2 position = Vector2.zero;
+    //public Vector2 position = Vector2.zero;
 
 }

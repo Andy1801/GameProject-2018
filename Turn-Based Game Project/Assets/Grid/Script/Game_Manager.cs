@@ -62,7 +62,7 @@ public class Game_Manager : MonoBehaviour {
 
 
                 graph[x, y] = new Tile_Neighbors(conditionX, conditionY);
-                graph[x, y].position = new Vector2(x, y);
+                graph[x, y].position = new Vector3(x, 0f,y);
             }
         }
     }
@@ -103,11 +103,11 @@ public class Game_Manager : MonoBehaviour {
     }
 
     //Highlights the tiles that the player can walk on and then lets the tiles know that they are highlighted.
-    public void highlight(GameObject tile, Tile_Properties tileInfo, bool toHighilight)
+    public void highlight(Tiles tile, Tile_Properties tileInfo, bool toHighilight)
     {
-        Renderer tileMat = tile.GetComponent<Renderer>();
+        Renderer tileMat = tile.gameObject.GetComponent<Renderer>();
 
-        ClickTile tileClick = tile.GetComponent<ClickTile>();
+        Tiles tileClick = tile;
 
         if (toHighilight)
         {

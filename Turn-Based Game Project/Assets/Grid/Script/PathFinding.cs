@@ -5,18 +5,15 @@ using UnityEngine;
 /// <summary>
 /// Finds all the paths that the user can take to get from one position to another based on the users speed.
 /// 
-/// FIXES NEEDED:
-/// 1. Have to make the units to be able to be changed to the clicked unit.
-/// 
+/// FIXES NEEDED: 
 /// 2. Have to setup a script to translate the position of the tile to that of the world space
-/// 
-/// 3. Highlighted tiles should be reseted(Function is located in the game manager)
 /// 
 /// </summary>
 
 public class PathFinding : MonoBehaviour {
 
     public float lerpTime;
+    public float distanceDifference;
 
     // Going to hold the next positions to be visited.
     private Stack<Tile_Neighbors> holdNeighbors;
@@ -26,15 +23,20 @@ public class PathFinding : MonoBehaviour {
 
     //The tile that the player or the tracker is currently on
     private Tile_Properties tileInfo;
-    private GameObject currentTiles;
+    private Tiles currentTiles;
 
     // Stores the cost to get to this tile related to the tile neighbor
     private Dictionary<Tile_Neighbors, int> cost;
 
     private bool findingPath;
 
+    public bool FindingPath
+    {
+        get { return findingPath; }
+    }
+
     // Change this so it is not public and is the unit you clicked on
-    public ClickUnit Unit;
+    public Allies Unit;
 
 	// Use this for initialization
 	void Start () {
@@ -54,7 +56,7 @@ public class PathFinding : MonoBehaviour {
 	private void TileOn(Vector3 currentPosition)
     {
         RaycastHit hit;
-        currentPosition = new Vector3(currentPosition.x, 1f, currentPosition.y);
+        currentPosition = new Vector3(currentPosition.x, 1f, currentPosition.z);
 
         //if ray cast hit something then store it into hit
         if(Physics.Raycast(currentPosition, Vector3.down, out hit))
@@ -62,14 +64,26 @@ public class PathFinding : MonoBehaviour {
             //if hit is not equal to null then set the current tile
             if (hit.collider != null)
             {
-                currentTiles = hit.collider.gameObject;
-                tileInfo = currentTiles.GetComponent<ClickTile>().property;
+                currentTiles = hit.collider.gameObject.GetComponent<Tiles>();
+                tileInfo = currentTiles.property;
             }
             else
                 Debug.LogError("The player is not standing on a platform");
         }
     }
 
+    public void RemovePath()
+    {
+        foreach (Tile_Neighbors current in gameManager.graph)
+        {
+            // If the cost of the tile had been modified then find the tile and take away the highlight.
+            if (cost[current] != 1000)
+            {
+                TileOn(current.position);
+                gameManager.highlight(currentTiles, tileInfo, false);
+            }
+        }
+    }
 
     /// <summary>
     /// The purpose is to find the shortest path well taking into account the speed
@@ -80,7 +94,10 @@ public class PathFinding : MonoBehaviour {
     {   
         // Stores the current tile that we are on.
         Tile_Neighbors sourceTile;
-        holdNeighbors.Clear();
+        if (holdNeighbors.Count != 0)
+            holdNeighbors.Clear();
+
+        findingPath = true;
 
         int x = Mathf.RoundToInt(startPosition.x);
         int z = Mathf.RoundToInt(startPosition.z);
@@ -113,9 +130,9 @@ public class PathFinding : MonoBehaviour {
 
                 //If our cost[next] is greater then our new move cost then change it because that is not the shortest path
                 //and push it to the top of the stack
-                if (!tileInfo.isWalkable)
+                if (!tileInfo.isWalkable || currentTiles.UnitOn != null)
                     continue;
-                else if (cost[next] > (cost[sourceTile] + tileInfo.move_cost) && (cost[sourceTile] + tileInfo.move_cost) <= Unit.property.speed)
+                else if (cost[next] > (cost[sourceTile] + tileInfo.move_cost) && (cost[sourceTile] + tileInfo.move_cost) <= Unit.speed)
                 {
                     // Highlights the tiles. This is located in the game manager
                     gameManager.highlight(currentTiles, tileInfo, true);
@@ -159,24 +176,12 @@ public class PathFinding : MonoBehaviour {
                 else if (cost[nextMoveTile] > cost[neighbor])
                     nextMoveTile = neighbor;
             }
-
-            Debug.Log(cost[nextMoveTile]);
-
             // Push the shortest tile that was found in the foreach loop above
             holdNeighbors.Push(nextMoveTile);
             startMoveTile = nextMoveTile;
         }
 
-
-        foreach(Tile_Neighbors current in gameManager.graph)
-        {
-            // If the cost of the tile had been modified then find the tile and take away the highlight.
-            if(cost[current] != 1000)
-            {
-                TileOn(current.position);
-                gameManager.highlight(currentTiles, tileInfo, false);
-            }
-        }
+        RemovePath();
 
         StartCoroutine("MoveUnit");
         
@@ -195,7 +200,11 @@ public class PathFinding : MonoBehaviour {
         Tile_Neighbors destinationTile = holdNeighbors.Pop();
 
         //The position of the tile you are moving to. TODO: Make the new Portion of this into a function
-        Vector3 destination = new Vector3(destinationTile.position.x, 1f, destinationTile.position.y);
+        Vector3 destination = new Vector3(destinationTile.position.x, 1f, destinationTile.position.z);
+
+        // Sets the current tile to not have anything above it.
+        TileOn(destination);
+        currentTiles.UnitOn = null;
 
         // While the stack is not empty keep moving the unit.
         while(holdNeighbors.Count != 0)
@@ -211,13 +220,11 @@ public class PathFinding : MonoBehaviour {
             //If distance is less then a certain number then you have reached the current position
             //set the next one and move to it.
             // Should not be a magic number
-            if (distance < 0.1)
+            if (distance < distanceDifference)
             {
-                Debug.Log("Distance met");
-                Debug.Log("Destination: " + holdNeighbors.Peek().position);
                 transform.position = destination;
                 destinationTile = holdNeighbors.Pop();
-                destination = new Vector3(destinationTile.position.x, 1f, destinationTile.position.y);
+                destination = new Vector3(destinationTile.position.x, 1f, destinationTile.position.z);
             }
 
             //Wait until the end of frame to run the while loop again.
@@ -235,12 +242,16 @@ public class PathFinding : MonoBehaviour {
 
             distance = Vector3.Distance(Unit.transform.position, destination);
 
-            if (distance < 0.1)
+            if (distance < distanceDifference)
             {
                 transform.position = destination;
+                    
+                TileOn(destination);
+                currentTiles.UnitOn = Unit.gameObject;
             }
         }
 
-        //findingPath = false;
+        findingPath = false;
+        Unit.Active = false;
     }
 }

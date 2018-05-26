@@ -8,7 +8,7 @@ using UnityEngine;
 [System.Serializable]
 public class Tile_Neighbors{
     public Tile_Neighbors[] neighbors;
-    public Vector2 position;  
+    public Vector3 position;  
 
     public int counter;
 

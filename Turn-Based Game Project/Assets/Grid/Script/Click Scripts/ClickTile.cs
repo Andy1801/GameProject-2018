@@ -4,35 +4,21 @@ using UnityEngine;
 
 public class ClickTile : MonoBehaviour {
 
-    public Tile_Properties property;
-
-    private float x;
-    private float y;
-
-    private bool highlighted;
+    private Tiles tile;
 
     private PathFinding path;
 
-    public bool Highlighted
-    {
-        get { return highlighted; }
-        set { highlighted = value; }
-    }
-
     private void Start()
     {
+        tile = GetComponent<Tiles>();
         path = GameObject.FindWithTag("GameManager").GetComponent<PathFinding>();
     }
 
     private void OnMouseDown()
     {
-        x = transform.position.x;
-        y = transform.position.z;
-
-
-        if (highlighted)
+        if (tile.Highlighted)
         {
-            path.pathSetup(x,y);
+            path.pathSetup(tile.xPosition, tile.zPosition);
         }
         // Call unity UI system script to showcase information
     }

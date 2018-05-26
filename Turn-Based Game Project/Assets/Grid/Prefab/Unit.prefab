@@ -20,8 +20,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4827305260538722}
   - component: {fileID: 33060556370026258}
-  - component: {fileID: 65794719085167846}
   - component: {fileID: 23705674514034616}
+  - component: {fileID: 65794719085167846}
+  - component: {fileID: 114798549467772674}
   - component: {fileID: 114917633744214488}
   m_Layer: 0
   m_Name: Unit
@@ -37,7 +38,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1558417704379564}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalPosition: {x: 5, y: 1, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -97,6 +98,22 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &114798549467772674
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1558417704379564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71ee2f5f6923a764fbe72a6935e66695, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UnitName: Ally
+  Attack: 1
+  Defense: 1
+  Speed: 6
+  property: {fileID: 11400000, guid: 9e899797e23026049944acfcb0c5f51e, type: 2}
 --- !u!114 &114917633744214488
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -109,4 +126,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   property: {fileID: 11400000, guid: 9e899797e23026049944acfcb0c5f51e, type: 2}
-  temp: {fileID: 114230997607394734, guid: e2b6a4895d709b24e9bcbd4ee9b340ee, type: 2}

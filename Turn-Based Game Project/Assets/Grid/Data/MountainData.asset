@@ -13,7 +13,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileName: Mountain
   move_cost: 1
-  isWalkable: 0
   damage: 2
+  isWalkable: 0
+  originalColor: {r: 0.34509805, g: 0.34117648, b: 0.34117648, a: 0}
+  moveableColor: {r: 1, g: 0.9538098, b: 0, a: 0}
+  unMoveableColor: {r: 0.8679245, g: 0.118725546, b: 0.118725546, a: 0}
   tile_Prefab: {fileID: 1899144661701556, guid: 864213da66efd964ba96e3e5ffdc98bc,
     type: 2}
