@@ -24,9 +24,10 @@ GameObject:
   - component: {fileID: 65794719085167846}
   - component: {fileID: 114798549467772674}
   - component: {fileID: 114917633744214488}
+  - component: {fileID: 114511776781557580}
   m_Layer: 0
   m_Name: Unit
-  m_TagString: Untagged
+  m_TagString: Unit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -38,7 +39,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1558417704379564}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5, y: 1, z: 10}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -98,6 +99,17 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &114511776781557580
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1558417704379564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfc8a966f7344ff468219edb899b6c92, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114798549467772674
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -110,9 +122,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UnitName: Ally
-  Attack: 1
-  Defense: 1
-  Speed: 6
+  attack: 0
+  defense: 0
+  speed: 5
   property: {fileID: 11400000, guid: 9e899797e23026049944acfcb0c5f51e, type: 2}
 --- !u!114 &114917633744214488
 MonoBehaviour:
@@ -125,4 +137,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6a789007df9f3949adb3c15167c4992, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  property: {fileID: 11400000, guid: 9e899797e23026049944acfcb0c5f51e, type: 2}

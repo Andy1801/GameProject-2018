@@ -12,7 +12,3 @@ MonoBehaviour:
   m_Name: DefaultUnit
   m_EditorClassIdentifier: 
   unitName: Warrior
-  attack: 1
-  defense: 1
-  speed: 5
-  position: {x: 0, y: 0}

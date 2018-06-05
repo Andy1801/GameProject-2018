@@ -6,8 +6,6 @@ using UnityEngine;
 /// The purpose of this script is to create the grid for the map based on the tiles 
 /// we gave it as well as a few conditions.
 /// 
-/// FIXES NEEDED:
-/// 1. Make the highlight transition slowly rather then instantly
 /// </summary>
 
 public class Game_Manager : MonoBehaviour {
@@ -16,21 +14,30 @@ public class Game_Manager : MonoBehaviour {
 	public Tile_Properties[] tiles;
 	
 	[SerializeField]
-	private int dimensions = 10;
+	public int dimensions = 10;
 
 	private int[,] tile_location;
+
+    private PathFinding path;
 
     [System.NonSerialized]
 	public Tile_Neighbors[,] graph;
 
     [SerializeField]
-    private GameObject parentGrid;
+    public GameObject parentGrid;
+
+    public PathFinding Path
+    {
+        get { return path; }
+    }
 	
 
     // Creates the grid based on the dimensions given and the basic grass tiles.
-	void Start () {
+	void Awake () {
 		tile_location = new int[dimensions,dimensions];
         graph = new Tile_Neighbors[dimensions, dimensions];
+
+        path = GetComponent<PathFinding>();
 
         //This is for testing
         tile_location[1, 0] = 1;
@@ -102,22 +109,42 @@ public class Game_Manager : MonoBehaviour {
         }
     }
 
-    //Highlights the tiles that the player can walk on and then lets the tiles know that they are highlighted.
-    public void highlight(Tiles tile, Tile_Properties tileInfo, bool toHighilight)
+    /// <summary>
+    /// Gets the tile that the player or the track is standing by casting a 
+    /// ray cast into the floor.
+    /// </summary>
+	public Tiles TileOn(Vector3 currentPosition)
     {
-        Renderer tileMat = tile.gameObject.GetComponent<Renderer>();
+        RaycastHit hit;
+        currentPosition = new Vector3(currentPosition.x, 1f, currentPosition.z);
 
-        Tiles tileClick = tile;
+        //if ray cast hit something then store it into hit
+        if (Physics.Raycast(currentPosition, Vector3.down, out hit))
+        {
+            //if hit is not equal to null then set the current tile
+            if (hit.collider != null)
+            {
+                return hit.collider.gameObject.GetComponent<Tiles>();
+            }
+            else
+                Debug.LogError("The player is not standing on a platform");
+        }
 
-        if (toHighilight)
-        {
-            tileMat.material.color = tileInfo.moveableColor;
-            tileClick.Highlighted = true;
-        }
-        else
-        {
-            tileMat.material.color = tileInfo.originalColor;
-            tileClick.Highlighted = false;
-        }
+        return null;
     }
+
+    public Vector3 TiletoWorld(Vector3 originalPosition, int worldToTile)
+    {
+        Vector3 axisPoint = new Vector3(dimensions / 2, 0.0f, dimensions / 2);
+        Vector3 rotatedPosition = originalPosition - axisPoint;
+
+        rotatedPosition = Quaternion.Euler(0.0f, parentGrid.transform.eulerAngles.y * worldToTile, 0.0f) * rotatedPosition;
+
+        rotatedPosition = rotatedPosition + axisPoint;
+
+        Debug.Log(rotatedPosition);
+
+        return rotatedPosition;
+    }
+
 }

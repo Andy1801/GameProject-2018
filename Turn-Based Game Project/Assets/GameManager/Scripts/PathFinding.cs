@@ -8,6 +8,8 @@ using UnityEngine;
 /// FIXES NEEDED: 
 /// 2. Have to setup a script to translate the position of the tile to that of the world space
 /// 
+/// 3. Create a enumerated type for the translation of tiles to world coordinates and vice versa
+/// 
 /// </summary>
 
 public class PathFinding : MonoBehaviour {
@@ -36,6 +38,7 @@ public class PathFinding : MonoBehaviour {
     }
 
     // Change this so it is not public and is the unit you clicked on
+    [System.NonSerialized]
     public Allies Unit;
 
 	// Use this for initialization
@@ -49,29 +52,6 @@ public class PathFinding : MonoBehaviour {
         findingPath = false;
 	}
 
-    /// <summary>
-    /// Gets the tile that the player or the track is standing by casting a 
-    /// ray cast into the floor.
-    /// </summary>
-	private void TileOn(Vector3 currentPosition)
-    {
-        RaycastHit hit;
-        currentPosition = new Vector3(currentPosition.x, 1f, currentPosition.z);
-
-        //if ray cast hit something then store it into hit
-        if(Physics.Raycast(currentPosition, Vector3.down, out hit))
-        {
-            //if hit is not equal to null then set the current tile
-            if (hit.collider != null)
-            {
-                currentTiles = hit.collider.gameObject.GetComponent<Tiles>();
-                tileInfo = currentTiles.property;
-            }
-            else
-                Debug.LogError("The player is not standing on a platform");
-        }
-    }
-
     public void RemovePath()
     {
         foreach (Tile_Neighbors current in gameManager.graph)
@@ -79,8 +59,8 @@ public class PathFinding : MonoBehaviour {
             // If the cost of the tile had been modified then find the tile and take away the highlight.
             if (cost[current] != 1000)
             {
-                TileOn(current.position);
-                gameManager.highlight(currentTiles, tileInfo, false);
+                currentTiles = gameManager.TileOn(gameManager.TiletoWorld(current.position, 1));
+                currentTiles.highlight(Color.green, false);
             }
         }
     }
@@ -97,16 +77,16 @@ public class PathFinding : MonoBehaviour {
         if (holdNeighbors.Count != 0)
             holdNeighbors.Clear();
 
+        Vector3 tilePosition = gameManager.TiletoWorld(startPosition, -1);
+
         findingPath = true;
 
-        int x = Mathf.RoundToInt(startPosition.x);
-        int z = Mathf.RoundToInt(startPosition.z);
+        int x = Mathf.RoundToInt(tilePosition.x);
+        int z = Mathf.RoundToInt(tilePosition.z);
 
         // Sets all the dictionary pairs to zero based on the graph in game manager
         foreach (Tile_Neighbors current in gameManager.graph)
-        {
             cost[current] = 1000;
-        }
 
         // Sets the players position as the first location.
         sourceTile = gameManager.graph[x,z];
@@ -116,8 +96,6 @@ public class PathFinding : MonoBehaviour {
         //Pushes the sourceTile into the stack
         holdNeighbors.Push(sourceTile);
 
-        //Debug.Log(cost[sourceTile]);
-
         // As long as the stack as some elements then go through their
         // neighbors and calculate the cost of the speed.
          while(holdNeighbors.Count != 0)
@@ -126,7 +104,9 @@ public class PathFinding : MonoBehaviour {
 
              foreach (Tile_Neighbors next in neighbors)
              {
-                 TileOn(next.position);
+                currentTiles = gameManager.TileOn(gameManager.TiletoWorld(next.position, 1));
+
+                tileInfo = currentTiles.property; 
 
                 //If our cost[next] is greater then our new move cost then change it because that is not the shortest path
                 //and push it to the top of the stack
@@ -135,15 +115,16 @@ public class PathFinding : MonoBehaviour {
                 else if (cost[next] > (cost[sourceTile] + tileInfo.move_cost) && (cost[sourceTile] + tileInfo.move_cost) <= Unit.speed)
                 {
                     // Highlights the tiles. This is located in the game manager
-                    gameManager.highlight(currentTiles, tileInfo, true);
+                    currentTiles.highlight(Color.yellow, true);
                     cost[next] = cost[sourceTile] + tileInfo.move_cost;
                     holdNeighbors.Push(next);
                 }
              }
-
              // Pop the next element from the stack.
              sourceTile = holdNeighbors.Pop();
          }
+
+        Debug.Log("PathFinding Done");
     }
 
     /// <summary>
@@ -153,10 +134,16 @@ public class PathFinding : MonoBehaviour {
     /// </summary>
     /// <param xPosition="x position of the tile"></param>
     /// <param yPosition="y"></param>
-    public void pathSetup(float x, float y)
+    public void pathSetup(float x, float z)
     {
+
+        //Vector3 newPosition = gameManager.TiletoWorld(new Vector3(x, 0.0f, z));
+
+        //int xTemp = Mathf.RoundToInt(newPosition.x);
+        //int yTemp = Mathf.RoundToInt(newPosition.z);
+
         int xTemp = (int)x;
-        int yTemp = (int)y;
+        int yTemp = (int)z;
 
         // The tile that you want to move to
         Tile_Neighbors startMoveTile = gameManager.graph[xTemp,yTemp];
@@ -176,12 +163,16 @@ public class PathFinding : MonoBehaviour {
                 else if (cost[nextMoveTile] > cost[neighbor])
                     nextMoveTile = neighbor;
             }
+
+            Debug.Log("Tile position: " + nextMoveTile.position);
             // Push the shortest tile that was found in the foreach loop above
             holdNeighbors.Push(nextMoveTile);
             startMoveTile = nextMoveTile;
         }
 
         RemovePath();
+
+        Debug.Log("Path Setup done");
 
         StartCoroutine("MoveUnit");
         
@@ -200,10 +191,11 @@ public class PathFinding : MonoBehaviour {
         Tile_Neighbors destinationTile = holdNeighbors.Pop();
 
         //The position of the tile you are moving to. TODO: Make the new Portion of this into a function
-        Vector3 destination = new Vector3(destinationTile.position.x, 1f, destinationTile.position.z);
+        Vector3 destination = gameManager.TiletoWorld(destinationTile.position, 1);//new Vector3(destinationTile.position.x, 1f, destinationTile.position.z);
+        destination = new Vector3(destination.x, 1.0f, destination.z);
 
         // Sets the current tile to not have anything above it.
-        TileOn(destination);
+        currentTiles = gameManager.TileOn(destination);
         currentTiles.UnitOn = null;
 
         // While the stack is not empty keep moving the unit.
@@ -224,7 +216,8 @@ public class PathFinding : MonoBehaviour {
             {
                 transform.position = destination;
                 destinationTile = holdNeighbors.Pop();
-                destination = new Vector3(destinationTile.position.x, 1f, destinationTile.position.z);
+                destination = gameManager.TiletoWorld(destinationTile.position, 1);//new Vector3(destinationTile.position.x, 1f, destinationTile.position.z);
+                destination = new Vector3(destination.x, 1.0f, destination.z);
             }
 
             //Wait until the end of frame to run the while loop again.
@@ -246,10 +239,12 @@ public class PathFinding : MonoBehaviour {
             {
                 transform.position = destination;
                     
-                TileOn(destination);
+                currentTiles = gameManager.TileOn(destination);
                 currentTiles.UnitOn = Unit.gameObject;
             }
         }
+
+        Debug.Log("Movement Done");
 
         findingPath = false;
         Unit.Active = false;
