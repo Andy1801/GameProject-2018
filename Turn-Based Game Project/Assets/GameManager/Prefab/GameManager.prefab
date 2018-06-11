@@ -21,6 +21,8 @@ GameObject:
   - component: {fileID: 4315537288858568}
   - component: {fileID: 114230997607394734}
   - component: {fileID: 114389963876559546}
+  - component: {fileID: 114479569109977156}
+  - component: {fileID: 114447767080124076}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: GameManager
@@ -55,8 +57,8 @@ MonoBehaviour:
   tiles:
   - {fileID: 11400000, guid: deb3c181a626f794aaba05979724b3e4, type: 2}
   - {fileID: 11400000, guid: 9bf4f7f23657ff149914f71442df0b93, type: 2}
-  dimensions: 15
   parentGrid: {fileID: 0}
+  dimensions: 15
 --- !u!114 &114389963876559546
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -68,5 +70,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dce73d6c45a4ec141bc73b6d1a65e6eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114447767080124076
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1578352253069170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d050899ce80fffa4190b26c65e1f7da7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114479569109977156
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1578352253069170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a27d86768960fc4f9f74a6a1c0dec33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   lerpTime: 0.5
-  distanceDifference: 0
+  distanceDifference: 0.1

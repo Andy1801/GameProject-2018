@@ -2,18 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ClickTile : MonoBehaviour {
+public class ClickTile : ClickParent {
 
     private Tiles tile;
+    private Movement movement;
 
-    //private PathFinding path;
-
-    private Game_Manager gameManager;
-
-    private void Start()
+    private new void Start()
     {
+        base.Start();
         tile = GetComponent<Tiles>();
-        gameManager = GameObject.FindWithTag("GameManager").GetComponent<Game_Manager>();
+        movement = gameManager.GetMovement;
     }
 
     /*private void OnMouseEnter()
@@ -21,10 +19,9 @@ public class ClickTile : MonoBehaviour {
         tile.information();
     }*/
 
-    private void OnMouseDown()
+    protected override void OnMouseDown()
     {
-        if (tile.Highlighted)
-            gameManager.Path.pathSetup(tile.xPosition, tile.zPosition);
-        // Call unity UI system script to showcase information
+        if (tile.Highlighted && stateManager.CanDoState(movement.GetDoNotStates))
+            movement.SetUp(tile.xPosition, tile.zPosition);
     }
 }

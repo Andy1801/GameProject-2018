@@ -2,45 +2,42 @@
 using System.Collections.Generic;
 using UnityEngine;
 /// <summary>
-/// Rewrite the code to be more organized
 /// 
-/// Also when at 360 degrees the path is not calculated again.
+/// 
+/// TODO:
+/// 1. Check why we no longer needed to recalculate the path after rotation
+/// could be due to our tiletoworld function.
 /// </summary>
 public class RotateObject : MonoBehaviour {
 
-    /*private GameObject gameManager;
-    private Game_Manager managerScript;
-    private PathFinding path;*/
-
-    private Game_Manager gameManager;
-
+    private Movement movement;
+    private StateManager stateManager;
     private GameObject parentGrid;
+
+    private int[] doNotStates;
 
     private float direction;
     private float rotation;
 
-    private bool done;
-    private bool turn;
-
     private Vector3 axisPosition;
-    private Vector3 dir;
-    private Quaternion rot;
+    private Vector3 newPosition;
+
+    public int[] GetDoNotStates
+    {
+        get { return doNotStates; }
+    }
+
 	// Use this for initialization
 	void Start () {
-        /*gameManager = GameObject.FindWithTag("GameManager"); 
-        managerScript = gameManager.GetComponent<Game_Manager>();
-        path = gameManager.GetComponent<PathFinding>();*/
+        stateManager = Game_Manager.instance.GetState;
+        parentGrid = Game_Manager.instance.parentGrid;
 
-        gameManager = GameObject.FindWithTag("GameManager").GetComponent<Game_Manager>();
-
-        parentGrid = gameManager.parentGrid;
+        doNotStates = new int[] { (int)CurrentState.moving };
 
         direction = 0;
         rotation = transform.eulerAngles.y;
 
-        turn = false;
-
-        float gridCenter = gameManager.dimensions / 2;
+        float gridCenter = Game_Manager.instance.dimensions / 2;
 
         axisPosition = new Vector3(gridCenter, 0.0f, gridCenter);
 	}
@@ -48,13 +45,13 @@ public class RotateObject : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        if (Input.GetKeyDown(KeyCode.A) && !turn)
+        if (Input.GetKeyDown(KeyCode.A) && stateManager.CanDoState(doNotStates))
         {
             direction = 1;
             rotation = rotation + 90;
         }
         
-        if (Input.GetKeyDown(KeyCode.D) && !turn)
+        if (Input.GetKeyDown(KeyCode.D) && stateManager.CanDoState(doNotStates))
         {
             direction = -1;
             rotation = rotation - 90;
@@ -66,25 +63,51 @@ public class RotateObject : MonoBehaviour {
         RotatePivot();
 	}
 
+    /// <summary>
+    /// Deteremines the difference between the objects position and the axis position
+    /// to rotate it around that pivot. Then sets the new position and the new rotation
+    /// of the object.
+    /// </summary>
+    private void RotatePivot()
+    {
+        if (tag == "Parent")
+            stateManager.Rotating = true;
+
+        newPosition = transform.position - axisPosition;
+        newPosition = Quaternion.Euler(0.0f, 90 * direction, 0.0f) * newPosition;
+        newPosition = newPosition + axisPosition;
+
+        transform.position = newPosition;
+        transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+
+        direction = 0;
+
+        if (tag == "Parent")
+            stateManager.Rotating = false;
+    }
+
+    /*//LateUpdate is called after update in every frame
     private void LateUpdate()
     {
-        if (done && parentGrid.transform.eulerAngles.y % 90 == 0)
+        /*if (done)
         {
             if (gameManager.Path.FindingPath && tag == "Unit")
             {
-                gameManager.Path.pathFinding(dir);
+                Debug.Log("Rotational pathfinding");
+                gameManager.Path.pathFinding(newPosition);
                 done = false;
-                Debug.Log("Found path in rotation");
             }
             else
                 done = false;
         }
-    }
+    }*/
 
-    private void RotatePivot()
+
+
+    /*private void RotatePivot()
     {
         //Direction relative to the pivot
-        if (!turn && direction != 0)
+        /*if (!turn && direction != 0)
         {
             dir = transform.position - axisPosition;
             dir = Quaternion.Euler(0.0f, 90 * direction, 0.0f) * dir;
@@ -101,14 +124,16 @@ public class RotateObject : MonoBehaviour {
 
             if (distance < 0.001)
             {
-                turn = false;
-                done = true;
                 direction = 0;
                 transform.position = dir;
                 transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
 
-                Debug.Log("Rotation Done");
+                turn = false;
+
+                if (tag == "Parent")
+                    done = true;
             }
         }
-    }
+    }*/
 }
+

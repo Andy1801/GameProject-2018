@@ -5,56 +5,82 @@ using UnityEngine;
 /// <summary>
 /// The purpose of this script is to create the grid for the map based on the tiles 
 /// we gave it as well as a few conditions.
-/// 
 /// </summary>
+
+public enum Conversion
+{
+    worldToTile = -1,
+    tileToWorld = 1
+};
 
 public class Game_Manager : MonoBehaviour {
 
+    //This is a instance property to get the singleton
+    public static Game_Manager instance { get; private set; }
+
     // Holds the property of the tiles
 	public Tile_Properties[] tiles;
-	
-	[SerializeField]
-	public int dimensions = 10;
-
-	private int[,] tile_location;
-
-    private PathFinding path;
 
     [System.NonSerialized]
-	public Tile_Neighbors[,] graph;
+    public Tile_Neighbors[,] graph;
 
     [SerializeField]
     public GameObject parentGrid;
 
-    public PathFinding Path
+    [SerializeField]
+	public int dimensions = 10;
+	private int[,] tile_location;
+
+    private Allies activeUnit;
+    private StateManager stateManager;
+    private PathFinding path;
+    private Movement movement;
+
+    public Allies ActiveUnit
     {
-        get { return path; }
+        get { return activeUnit;  }
+        set { activeUnit = value; }
     }
-	
+    public StateManager GetState { get { return stateManager; } }
+    public PathFinding GetPathFinder { get { return path; } }
+    public Movement GetMovement { get { return movement; } }
 
     // Creates the grid based on the dimensions given and the basic grass tiles.
 	void Awake () {
-		tile_location = new int[dimensions,dimensions];
-        graph = new Tile_Neighbors[dimensions, dimensions];
 
-        path = GetComponent<PathFinding>();
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
 
-        //This is for testing
-        tile_location[1, 0] = 1;
-        tile_location[2, 1] = 1;
+            tile_location = new int[dimensions, dimensions];
+            graph = new Tile_Neighbors[dimensions, dimensions];
 
-		for(int x = 0; x < dimensions; x++)
-		{
-			for(int y = 0; y < dimensions; y++)
-			{
-				int temp = tile_location[x,y];
-                if (parentGrid)
-				    Instantiate(tiles[temp].tile_Prefab, new Vector3(x, 0, y), Quaternion.identity, parentGrid.transform);
-			}
-		}
+            activeUnit = null;
 
-        SetNeighbors();
-        FindNeighbors();
+            stateManager = GetComponent<StateManager>();
+            path = GetComponent<PathFinding>();
+            movement = GetComponent<Movement>();
+
+            //This is for testing
+            tile_location[1, 0] = 1;
+            tile_location[2, 1] = 1;
+
+            for (int x = 0; x < dimensions; x++)
+            {
+                for (int y = 0; y < dimensions; y++)
+                {
+                    int temp = tile_location[x, y];
+                    if (parentGrid)
+                        Instantiate(tiles[temp].tile_Prefab, new Vector3(x, 0, y), Quaternion.identity, parentGrid.transform);
+                }
+            }
+
+            SetNeighbors();
+            FindNeighbors();
+        }
+        else
+            Destroy(gameObject);
     }
 
     //Initilizes the array for each of the neighbors related to one of the tiles.
@@ -73,7 +99,6 @@ public class Game_Manager : MonoBehaviour {
             }
         }
     }
-
 
     //Finds the neighbors and stores them.
     private void FindNeighbors()
@@ -110,7 +135,7 @@ public class Game_Manager : MonoBehaviour {
     }
 
     /// <summary>
-    /// Gets the tile that the player or the track is standing by casting a 
+    /// Gets the tile that the player or the tracker is standing by casting a 
     /// ray cast into the floor.
     /// </summary>
 	public Tiles TileOn(Vector3 currentPosition)
@@ -133,16 +158,21 @@ public class Game_Manager : MonoBehaviour {
         return null;
     }
 
+    /// <summary>
+    /// Converts the tile's local position to a world position and vice versa.
+    /// </summary>
+    /// <param name="originalPosition">Either the tiles locals position or the tiles world position</param>
+    /// <param name="worldToTile">Either converting from tile to world (1) or world to tile (-1)</param>
+    /// <returns></returns>
     public Vector3 TiletoWorld(Vector3 originalPosition, int worldToTile)
     {
         Vector3 axisPoint = new Vector3(dimensions / 2, 0.0f, dimensions / 2);
+
         Vector3 rotatedPosition = originalPosition - axisPoint;
 
         rotatedPosition = Quaternion.Euler(0.0f, parentGrid.transform.eulerAngles.y * worldToTile, 0.0f) * rotatedPosition;
 
         rotatedPosition = rotatedPosition + axisPoint;
-
-        Debug.Log(rotatedPosition);
 
         return rotatedPosition;
     }

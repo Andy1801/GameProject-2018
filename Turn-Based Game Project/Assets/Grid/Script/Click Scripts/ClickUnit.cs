@@ -2,32 +2,32 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ClickUnit : MonoBehaviour {
+public class ClickUnit : ClickParent {
 
-    private PathFinding path;
     private Allies unit;
+    private PathFinding pathFinder;
 
-    private void Start()
+    private new void Start()
     {
-        path = GameObject.FindWithTag("GameManager").GetComponent<PathFinding>();
+        base.Start();
         unit = GetComponent<Allies>();
+        pathFinder = gameManager.GetPathFinder;
     }
 
-    private void OnMouseDown()
+    protected override void OnMouseDown()
     {
-        if (!path.FindingPath)
+        if (!unit.Active  && stateManager.CanDoState(pathFinder.GetDoNotStates))
         {
             unit.Active = true;
-            path.Unit = unit;
-            path.pathFinding(new Vector3(transform.position.x, 1.0f, transform.position.z));
-        }
-        else if(path.FindingPath && !unit.Active)
-        {
-            unit.Active = true;
-            path.Unit.Active = false;
-            path.Unit = unit;
-            path.RemovePath();
-            path.pathFinding(new Vector3(transform.position.x, 1.0f, transform.position.z));
+
+            if (gameManager.ActiveUnit != null)
+            {
+                gameManager.ActiveUnit.Active = false;
+                pathFinder.RemovePath();
+            }
+             
+            gameManager.ActiveUnit = unit;
+            pathFinder.pathFinding(new Vector3(transform.position.x, 1.0f, transform.position.z));
         }
     }
 }
