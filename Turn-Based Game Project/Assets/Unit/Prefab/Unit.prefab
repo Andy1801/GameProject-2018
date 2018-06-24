@@ -125,6 +125,7 @@ MonoBehaviour:
   attack: 0
   defense: 0
   speed: 5
+  attackDistance: 1
   property: {fileID: 11400000, guid: 9e899797e23026049944acfcb0c5f51e, type: 2}
 --- !u!114 &114917633744214488
 MonoBehaviour:

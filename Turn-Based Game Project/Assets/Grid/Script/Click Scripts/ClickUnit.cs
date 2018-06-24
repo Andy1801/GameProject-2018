@@ -16,7 +16,7 @@ public class ClickUnit : ClickParent {
 
     protected override void OnMouseDown()
     {
-        if (!unit.Active  && stateManager.CanDoState(pathFinder.GetDoNotStates))
+        if (!unit.Active  && stateManager.CantDoState(pathFinder.GetDoNotStates))
         {
             unit.Active = true;
 
@@ -27,7 +27,6 @@ public class ClickUnit : ClickParent {
             }
              
             gameManager.ActiveUnit = unit;
-            pathFinder.pathFinding(new Vector3(transform.position.x, 1.0f, transform.position.z));
         }
     }
 }

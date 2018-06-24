@@ -14,6 +14,8 @@ public class PathFinding : MonoBehaviour {
     // Reference to the game manager script in order to access neighbors
     private Game_Manager gameManager;
 
+    private int playerSpeed;
+
     //States in which this particular state can not occur
     private int[] doNotStates;
 
@@ -40,25 +42,33 @@ public class PathFinding : MonoBehaviour {
 
         gameManager = Game_Manager.instance;
 
-        doNotStates = new int[] { (int)CurrentState.rotating, (int)CurrentState.moving };
+        doNotStates = new int[] { (int)CurrentState.rotating, (int)CurrentState.moving, (int)CurrentState.pending };
 
         cost = new Dictionary<Tile_Neighbors, int>();
-	}
+
+        foreach (Tile_Neighbors current in gameManager.graph)
+            cost[current] = defaultCost;
+    }
 
     /// <summary>
     /// The purpose is to find the shortest path well taking into account the speed
     /// of the player. This uses a dictionary to key-pair with the speed and adds 
     /// the movecost of the tile to remove from speed.
     /// </summary>
-    public void pathFinding(Vector3 startPosition)
+    public void pathFinding(Human unit)
     {
+        if (unit.Moved)
+            playerSpeed = unit.attackDistance;
+        else
+            playerSpeed = unit.speed;
+
         // Stores the current tile that we are on.
         Tile_Neighbors sourceTile;
 
         if (holdNeighbors.Count != 0)
             holdNeighbors.Clear();
 
-        Vector3 tilePosition = gameManager.TiletoWorld(startPosition, (int)Conversion.worldToTile);
+        Vector3 tilePosition = gameManager.TiletoWorld(unit.transform.position, (int)Conversion.worldToTile);
 
         int x = Mathf.RoundToInt(tilePosition.x);
         int z = Mathf.RoundToInt(tilePosition.z);
@@ -91,10 +101,10 @@ public class PathFinding : MonoBehaviour {
                 //and push it to the top of the stack
                 if (!tileInfo.isWalkable || currentTiles.UnitOn != null)
                     continue;
-                else if (cost[next] > (cost[sourceTile] + tileInfo.move_cost) && (cost[sourceTile] + tileInfo.move_cost) <= gameManager.ActiveUnit.speed)
+                else if (cost[next] > (cost[sourceTile] + tileInfo.move_cost) && (cost[sourceTile] + tileInfo.move_cost) <= playerSpeed)
                 {
                     // Highlights the tiles. This is located in the game manager
-                    currentTiles.highlight(Color.yellow, true);
+                    currentTiles.highlight(true, unit);
                     cost[next] = cost[sourceTile] + tileInfo.move_cost;
                     holdNeighbors.Push(next);
                 }
@@ -105,7 +115,7 @@ public class PathFinding : MonoBehaviour {
     }
 
     /// <summary>
-    /// Resets the cost of all the tiles and removes all the highlighted grids.
+    /// Resets the cost of all the tiles and removes all the highlight from certain tiles.
     /// </summary>
     public void RemovePath()
     {
@@ -115,7 +125,7 @@ public class PathFinding : MonoBehaviour {
             if (cost[current] != defaultCost)
             {
                 currentTiles = gameManager.TileOn(gameManager.TiletoWorld(current.position, (int)Conversion.tileToWorld));
-                currentTiles.highlight(Color.green, false);
+                currentTiles.highlight(false, null);
             }
         }
     }

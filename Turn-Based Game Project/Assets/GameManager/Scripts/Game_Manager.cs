@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// The purpose of this script is to create the grid for the map based on the tiles 
-/// we gave it as well as a few conditions.
+/// This is a singleton script that has access other scripts in the game
+/// to share and use them with other components in the game.
 /// </summary>
 
 public enum Conversion
@@ -31,22 +31,39 @@ public class Game_Manager : MonoBehaviour {
 	public int dimensions = 10;
 	private int[,] tile_location;
 
+    public Tiles previousTile;
+    public Tiles attackTile;
+
+    //Delegates used for phase setup, phase reversal, and key functions.
+    public delegate void PhaseDelegate();
+    public PhaseDelegate phaseSetup;
+    public PhaseDelegate phaseReversal;
+    public PhaseDelegate enterAction;
+    public PhaseDelegate qAction;
+
+    public Color TileColor { get; set; }
+
     private Allies activeUnit;
+    private Tracker tracker;
     private StateManager stateManager;
+    private PhaseSwapping phaseSwap;
     private PathFinding path;
     private Movement movement;
 
+    // Properties: Getter and Setter functions for other scripts
     public Allies ActiveUnit
     {
         get { return activeUnit;  }
         set { activeUnit = value; }
     }
+    public Tracker GetTracker { get { return tracker; } }
     public StateManager GetState { get { return stateManager; } }
+    public PhaseSwapping GetPhase { get { return phaseSwap; } }
     public PathFinding GetPathFinder { get { return path; } }
     public Movement GetMovement { get { return movement; } }
 
     // Creates the grid based on the dimensions given and the basic grass tiles.
-	void Awake () {
+    void Awake () {
 
         if (instance == null)
         {
@@ -57,6 +74,9 @@ public class Game_Manager : MonoBehaviour {
             graph = new Tile_Neighbors[dimensions, dimensions];
 
             activeUnit = null;
+
+            tracker = GameObject.FindGameObjectWithTag("Tracker").GetComponent<Tracker>();
+            phaseSwap = GameObject.FindGameObjectWithTag("PhaseManager").GetComponent<PhaseSwapping>();
 
             stateManager = GetComponent<StateManager>();
             path = GetComponent<PathFinding>();
@@ -98,10 +118,10 @@ public class Game_Manager : MonoBehaviour {
                 graph[x, y].position = new Vector3(x, 0f,y);
             }
         }
-    }
+    } 
 
     //Finds the neighbors and stores them.
-    private void FindNeighbors()
+    private void FindNeighbors() 
     {
         int counter = 0;
 
@@ -176,5 +196,4 @@ public class Game_Manager : MonoBehaviour {
 
         return rotatedPosition;
     }
-
 }

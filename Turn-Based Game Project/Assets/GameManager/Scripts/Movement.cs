@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Moves the selected unit from one point in the grid to another by first setting up
+/// the path that the unit will take and then using a coroutine to move it tile by tile.
+/// </summary>
 public class Movement : MonoBehaviour {
 
     public float lerpTime;
@@ -9,17 +13,22 @@ public class Movement : MonoBehaviour {
 
     private Game_Manager gameManager;
 
-    //States in which this particular state can not occur
+    private float defaultLerpTime;
+
+    //States in which movement of the unit can not occur
     private int[] doNotStates;
 
     private Stack<Tile_Neighbors> movingPath;
 
+    //Properties: Getter functions
     public int[] GetDoNotStates { get { return doNotStates; } }
 
     // Use this for initialization
     private void Start()
     {
         gameManager = Game_Manager.instance;
+
+        defaultLerpTime = lerpTime;
 
         doNotStates = new int[] { (int)CurrentState.rotating };
 
@@ -28,7 +37,7 @@ public class Movement : MonoBehaviour {
 
     /// <summary>
     /// Sets up the path from inital position of the player to the
-    /// current x and z coordinate
+    /// current x and z coordinate into a stack movingPath.
     /// </summary>
     /// <param name="x"> The new x position of where you want to move</param>
     /// <param name="z"> The new z position of where you want to move</param>
@@ -43,11 +52,13 @@ public class Movement : MonoBehaviour {
 
         movingPath.Push(startMoveTile);
 
+        // While the cost of the tile you are on is not equal to 0 continue to search for the shortest path.
         while(gameManager.GetPathFinder.Cost[startMoveTile] != 0)
         {
             // The next tile that you move to
             Tile_Neighbors nextMoveTile = null;
 
+            //Find the neighbor of the tile that you are on that has the smallest cost
             foreach(Tile_Neighbors neighbor in startMoveTile.neighbors)
             {
                 if (nextMoveTile == null)
@@ -56,11 +67,12 @@ public class Movement : MonoBehaviour {
                     nextMoveTile = neighbor;
             }
 
-            // Push the shortest tile that was found in the foreach loop above
+            // Push the shortest tile that was found in the foreach loop on the stack.
             movingPath.Push(nextMoveTile);
             startMoveTile = nextMoveTile;
         }
 
+        // Remove all the paths that were being shown by the path finder.
         gameManager.GetPathFinder.RemovePath();
 
         Debug.Log("Moving path setup done");
@@ -74,13 +86,13 @@ public class Movement : MonoBehaviour {
     /// <returns></returns>
     private IEnumerator MoveUnit()
     {
-        //Distance between to Vector3
+        //Distance between two Vector3's
         float distance = 0f;
 
         // The tile you are moving to
         Tile_Neighbors destinationTile = movingPath.Pop();
 
-        //The position of the tile you are moving to.
+        //The position of the tile you are moving to. 
         Vector3 destination = gameManager.TiletoWorld(destinationTile.position, (int)Conversion.tileToWorld);
         destination = new Vector3(destination.x, 1.0f, destination.z);
 
@@ -111,7 +123,7 @@ public class Movement : MonoBehaviour {
             }
 
             //Wait until the end of frame to run the while loop again.
-            yield return new WaitForEndOfFrame();
+            yield return null;
         }
 
         distance = Vector3.Distance(gameManager.ActiveUnit.transform.position, destination);
@@ -124,17 +136,21 @@ public class Movement : MonoBehaviour {
 
             distance = Vector3.Distance(gameManager.ActiveUnit.transform.position, destination);
 
-            yield return new WaitForEndOfFrame();
+            yield return null;
         }
 
         gameManager.ActiveUnit.transform.position = destination;
 
         currentTiles = gameManager.TileOn(destination);
-        currentTiles.UnitOn = gameManager.ActiveUnit.gameObject;
+        currentTiles.UnitOn = gameManager.ActiveUnit;
 
         Debug.Log("Movement Done");
 
-        gameManager.ActiveUnit.Active = false;
+        lerpTime = defaultLerpTime;
+
         gameManager.GetState.Moving = false;
+
+        gameManager.GetPhase.PhaseUpdate((int)CurrentPhase.ChooseEnemy).PhaseSetup();
+        
     }
 }

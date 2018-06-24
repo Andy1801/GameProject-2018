@@ -21,7 +21,7 @@ public class ClickTile : ClickParent {
 
     protected override void OnMouseDown()
     {
-        if (tile.Highlighted && stateManager.CanDoState(movement.GetDoNotStates))
+        if (tile.Highlighted && stateManager.CantDoState(movement.GetDoNotStates))
             movement.SetUp(tile.xPosition, tile.zPosition);
     }
 }

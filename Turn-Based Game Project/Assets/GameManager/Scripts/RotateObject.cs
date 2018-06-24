@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 /// <summary>
 /// 
+/// Rotates objects around a pivot that is in the center of the grid.
 /// 
 /// TODO:
 /// 1. Check why we no longer needed to recalculate the path after rotation
@@ -32,7 +34,7 @@ public class RotateObject : MonoBehaviour {
         stateManager = Game_Manager.instance.GetState;
         parentGrid = Game_Manager.instance.parentGrid;
 
-        doNotStates = new int[] { (int)CurrentState.moving };
+        doNotStates = new int[] { (int)CurrentState.moving, (int)CurrentState.tracking };
 
         direction = 0;
         rotation = transform.eulerAngles.y;
@@ -45,13 +47,13 @@ public class RotateObject : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        if (Input.GetKeyDown(KeyCode.A) && stateManager.CanDoState(doNotStates))
+        if (Input.GetKeyDown(KeyCode.A) && stateManager.CantDoState(doNotStates))
         {
             direction = 1;
             rotation = rotation + 90;
         }
         
-        if (Input.GetKeyDown(KeyCode.D) && stateManager.CanDoState(doNotStates))
+        if (Input.GetKeyDown(KeyCode.D) && stateManager.CantDoState(doNotStates))
         {
             direction = -1;
             rotation = rotation - 90;

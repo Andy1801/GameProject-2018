@@ -8,6 +8,8 @@ TagManager:
   - GameManager
   - Unit
   - Parent
+  - Tracker
+  - PhaseManager
   layers:
   - Default
   - TransparentFX
