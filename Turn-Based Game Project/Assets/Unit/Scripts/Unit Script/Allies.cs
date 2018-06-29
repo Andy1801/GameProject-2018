@@ -13,7 +13,7 @@ using UnityEngine;
 /// </summary>
 public class Allies : Human {
 
-    public Unit_Properties property;
+    public Unit_Properties property; 
 
     private bool active;
 

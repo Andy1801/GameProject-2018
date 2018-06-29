@@ -59,6 +59,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9bf4f7f23657ff149914f71442df0b93, type: 2}
   parentGrid: {fileID: 0}
   dimensions: 15
+  previousTile: {fileID: 0}
+  attackTile: {fileID: 0}
 --- !u!114 &114389963876559546
 MonoBehaviour:
   m_ObjectHideFlags: 1

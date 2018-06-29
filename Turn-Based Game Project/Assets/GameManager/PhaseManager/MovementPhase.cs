@@ -16,16 +16,12 @@ public class MovementPhase : PhaseParent {
 
     public override void PhaseSetup()
     {
-        Debug.Log("Movement Phase ");
-
         gameManager.enterAction = moveUnit;
         gameManager.phaseReversal = PhaseReversal;
     }
 
     public override void PhaseReversal()
     {
-        Debug.Log("Movement Phase Reversal");
-
         gameManager.ActiveUnit.SetInActive();
         gameManager.GetPathFinder.RemovePath();
         gameManager.GetTracker.CheckTileTracker();
@@ -35,8 +31,6 @@ public class MovementPhase : PhaseParent {
 
     private void moveUnit()
     {
-        Debug.Log("Enter Activate Movement Phase");
-
         Tiles currentTile = gameManager.TileOn(gameManager.GetTracker.transform.position);
 
         if (currentTile.Highlighted)

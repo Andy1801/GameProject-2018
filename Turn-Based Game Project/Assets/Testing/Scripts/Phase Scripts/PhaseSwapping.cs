@@ -7,7 +7,8 @@ public enum CurrentPhase
     placement,
     tactic,
     movement,
-    ChooseEnemy, 
+    ChooseEnemy,
+    ChooseAttack,
     end
 };
 
@@ -16,12 +17,14 @@ public class PhaseSwapping : MonoBehaviour {
     private TacticPhase tacticPhase;
     private MovementPhase movementPhase;
     private ChooseEnemy chooseEnemyPhase;
+    private ChooseAttack chooseAttackPhase;
 
 	// Use this for initialization
 	void Awake () {
         tacticPhase = GetComponent<TacticPhase>();
         movementPhase = GetComponent<MovementPhase>();
         chooseEnemyPhase = GetComponent<ChooseEnemy>();
+        chooseAttackPhase = GetComponent<ChooseAttack>();
 	}
 
     private void Start()
@@ -39,6 +42,8 @@ public class PhaseSwapping : MonoBehaviour {
                 return movementPhase;
             case (int)CurrentPhase.ChooseEnemy:
                 return chooseEnemyPhase;
+            case (int)CurrentPhase.ChooseAttack:
+                return chooseAttackPhase;
             default:
                 return null;
         }

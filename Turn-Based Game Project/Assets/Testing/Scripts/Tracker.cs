@@ -29,7 +29,7 @@ public class Tracker : MonoBehaviour {
         stateManager = Game_Manager.instance.GetState;
         currentTile = null;
 
-        doNotStates = new int[] { (int)CurrentState.moving };
+        doNotStates = new int[] { (int)CurrentState.moving, (int)CurrentState.chooseAttack };
 
         atLocation = false;
 
@@ -39,8 +39,6 @@ public class Tracker : MonoBehaviour {
 
     private void Update()
     {
-        //Update the movement of the tracker every frame
-
         if ((Input.GetButton("Horizontal") || Input.GetButton("Vertical")) && !atLocation && stateManager.CantDoState(doNotStates))
         {
             horizontalMovement = Input.GetAxisRaw("Horizontal");
@@ -81,6 +79,12 @@ public class Tracker : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Makes sure that the tracker doesnt go outside the boundaries of the game.
+    /// </summary>
+    /// <param name="axisPosition"> Ethier the x or z position of our new position</param>
+    /// <param name="originalPosition">Either the x or z position of our transform's position</param>
+    /// <returns></returns>
     private float TrackInGrid(float axisPosition , float originalPosition)
     {
         // Needed due to a slight rounding error that occurs when you rotate.

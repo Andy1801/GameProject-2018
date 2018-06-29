@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Human: MonoBehaviour {
 
@@ -9,6 +10,7 @@ public class Human: MonoBehaviour {
     public int defense;
     public int speed;
     public int attackDistance;
+    public Skill_Properties[] skills;
 
     protected PathFinding pathFinder;
     protected StateManager stateManager;
@@ -32,7 +34,6 @@ public class Human: MonoBehaviour {
         pathFinder = Game_Manager.instance.GetPathFinder;
         stateManager = Game_Manager.instance.GetState;
     }
-
     public virtual void CallPathFinding()
     {
 

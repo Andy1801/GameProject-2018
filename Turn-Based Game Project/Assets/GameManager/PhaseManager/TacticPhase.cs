@@ -5,17 +5,17 @@ using UnityEngine;
 public class TacticPhase : PhaseParent {
 
     private MovementPhase movementPhase;
+    private ChooseEnemy chooseEnemyPhase;
 
     private new void Start()
     {
         base.Start();
         movementPhase = (MovementPhase)phaseSwap.PhaseUpdate((int)CurrentPhase.movement);
+        chooseEnemyPhase = (ChooseEnemy)phaseSwap.PhaseUpdate((int)CurrentPhase.ChooseEnemy);
     }
 
     public override void PhaseSetup()
     {
-        Debug.Log("Tactic Phase");
-
         //Change the phaseswapping in the state manager to true.
 
         gameManager.enterAction = activatePlayer;
@@ -31,9 +31,7 @@ public class TacticPhase : PhaseParent {
     /// </summary>
     public override void PhaseReversal()
     {
-        Debug.Log("Tactic Phase Reversal");
-
-        if (gameManager.ActiveUnit != null && gameManager.ActiveUnit.Moved)
+        if (gameManager.ActiveUnit != null && gameManager.ActiveUnit.Moved && gameManager.previousTile != null)
         {
             gameManager.TileOn(gameManager.ActiveUnit.transform.position).UnitOn = null;
 
@@ -50,8 +48,6 @@ public class TacticPhase : PhaseParent {
 
     private void activatePlayer()
     {
-        Debug.Log("Tactic Enter");
-
         Tiles currentTile = gameManager.TileOn(gameManager.GetTracker.transform.position);
 
         if (currentTile.UnitOn != null && currentTile.UnitOn.tag == "Unit")
@@ -66,6 +62,9 @@ public class TacticPhase : PhaseParent {
             {
                 //Set the battle Phase choose enemy up.
                 Debug.Log("Tactic --> Battle");
+                currentTile.UnitOn.SetActive();
+                gameManager.previousTile = null;
+                chooseEnemyPhase.PhaseSetup();
             }
         }
     }

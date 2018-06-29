@@ -5,18 +5,18 @@ using UnityEngine;
 public class ChooseEnemy : PhaseParent {
 
     private TacticPhase tacticPhase;
+    private ChooseAttack chooseAttackPhase;
 
     private new void Start()
     {
         base.Start();
         tacticPhase = (TacticPhase)phaseSwap.PhaseUpdate((int)CurrentPhase.tactic);
+        chooseAttackPhase = (ChooseAttack)phaseSwap.PhaseUpdate((int)CurrentPhase.ChooseAttack);
     }
 
     public override void PhaseSetup()
     {
         //Create the function that the enter activate delegate will be set to
-
-        Debug.Log("Choose Enemy Phase");
 
         gameManager.GetPathFinder.pathFinding(gameManager.ActiveUnit);
 
@@ -26,8 +26,6 @@ public class ChooseEnemy : PhaseParent {
 
     public override void PhaseReversal()
     {
-        Debug.Log("Choose Enemy Phase Reversal");
-
         gameManager.ActiveUnit.SetInActive();
         gameManager.GetPathFinder.RemovePath();
         gameManager.GetTracker.CheckTileTracker();
@@ -42,6 +40,7 @@ public class ChooseEnemy : PhaseParent {
         {
             gameManager.attackTile = currentTile;
             //Call the choose Attack phase.
+            chooseAttackPhase.PhaseSetup();
         }
     }
 }

@@ -23,7 +23,6 @@ GameObject:
   - component: {fileID: 23705674514034616}
   - component: {fileID: 65794719085167846}
   - component: {fileID: 114798549467772674}
-  - component: {fileID: 114917633744214488}
   - component: {fileID: 114511776781557580}
   m_Layer: 0
   m_Name: Unit
@@ -127,14 +126,3 @@ MonoBehaviour:
   speed: 5
   attackDistance: 1
   property: {fileID: 11400000, guid: 9e899797e23026049944acfcb0c5f51e, type: 2}
---- !u!114 &114917633744214488
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1558417704379564}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6a789007df9f3949adb3c15167c4992, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

@@ -16,6 +16,7 @@ using UnityEngine;
 /// </summary>
 public enum CurrentState
 {
+    chooseAttack,
     rotating,
     tracking,
     pending,
@@ -27,7 +28,7 @@ public class StateManager : MonoBehaviour {
     // These determine the current state occuring in the game
     private bool phaseSwapping = false;
     private bool tacticPhase = false;
-    private bool battlePhase = false;
+    private bool chooseAttack = false;
     private bool rotating = false;
     private bool tracking = false;
     private bool pending = false;
@@ -39,10 +40,10 @@ public class StateManager : MonoBehaviour {
         get { return tacticPhase; }
         set { tacticPhase = value; }
     }
-    public bool BattlePhase
+    public bool ChoosingAttack
     {
-        get { return battlePhase; }
-        set { battlePhase = value; }
+        get { return chooseAttack; }
+        set { chooseAttack = value; }
     }
 
     public bool Rotating
@@ -94,6 +95,8 @@ public class StateManager : MonoBehaviour {
     {
         switch (state)
         {
+            case (int)CurrentState.chooseAttack:
+                return ChoosingAttack;
             case (int)CurrentState.rotating:
                 return rotating;
             case (int)CurrentState.tracking:

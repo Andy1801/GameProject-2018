@@ -21,6 +21,9 @@ public class Game_Manager : MonoBehaviour {
     // Holds the property of the tiles
 	public Tile_Properties[] tiles;
 
+    // States the maximum amount of skills a player can hold.
+    public int skillCount;
+
     [System.NonSerialized]
     public Tile_Neighbors[,] graph;
 
@@ -36,10 +39,8 @@ public class Game_Manager : MonoBehaviour {
 
     //Delegates used for phase setup, phase reversal, and key functions.
     public delegate void PhaseDelegate();
-    public PhaseDelegate phaseSetup;
     public PhaseDelegate phaseReversal;
     public PhaseDelegate enterAction;
-    public PhaseDelegate qAction;
 
     public Color TileColor { get; set; }
 
